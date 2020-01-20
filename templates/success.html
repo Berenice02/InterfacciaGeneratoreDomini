@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css"/>
+        
+        <title>Success</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!-- include jQuery library -->
+        <script src="{{ url_for('static', filename='lib/jquery-1.12.3.js') }}"></script>
+        
+    </head>
+
+    <body>
+        <div id="header">
+            <img class="logo" src="{{ url_for('static', filename='img/fourbythree.jpg') }}" />
+        </div>
+        
+        <div id="content">
+            <div id="process-list" class="section">
+                <div class="section-title">Successo!</div>
+
+                <div class="section-content">
+                    <p>Il tuo file è stato salvato correttamente con il nome</p>
+                    <p>{{file}}</p>
+                </div>
+            </div>
+
+            <form method="GET" action="/">
+                <button class="submit" type="submit">Crea un nuovo dominio</button>
+            </form>
+        </div>
+    </body>
+
+</html>

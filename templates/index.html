@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css"/>
+        
+        <title>Interface</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!-- include jQuery library -->
+        <script src="{{ url_for('static', filename='lib/jquery-3.4.1.js') }}"></script>
+
+        <!-- custom library -->
+        <script src="{{ url_for('static', filename='lib/fourbythree.js') }}"></script>
+        
+    </head>
+
+    <body>
+        
+        <div id="header">
+            <img class="logo" src="{{ url_for('static', filename='img/fourbythree.jpg') }}" />
+        </div>
+        
+        <div id="content">
+            
+            <div id="process-list" class="section">
+                <div class="section-title">Work-cell Operations</div>
+                
+                <div class="section-content">
+
+                    <div class="section-item">
+                        <div class="process">
+                            <div class="process-name" title="Collaborative Assembly">
+                                Cembre - Collaborative Assembly
+                            </div>
+                            
+                            <div class="process-description">
+
+                                {% for element in lista %}
+                                <div class="process-task" title="{{element.name}}">
+                                    <div class="task-name">
+                                        {{element.name}} - {{element.description}}
+                                    </div>
+
+                                    <div class="task-description" title="{{element.name}}">
+                                        {% for function in element.functions %}
+                                        <div class="function">
+                                            <div class="type">
+                                                <select class="select-type">
+                                                    <option selected disabled>{{function.type}}</option>
+                                                    <option>Manipolazione</option>
+                                                    <option>Spostamento</option>
+                                                </select>
+                                            </div>
+                                            <div class="position">
+                                                <div class="function-pos handle-pos">In posizione</div>
+                                                <div class="function-pos first-pos">Dalla posizione</div>
+                                                <select class="pos select-pos">
+                                                    <option selected disabled>{{function.pos}}</option>
+                                                </select>
+                                                <div class="function-pos second-pos">alla</div>
+                                                <select class="pos select-pos second-pos">
+                                                    <option selected disabled>{{function.pos1}}</option>
+                                                </select>
+                                            </div>
+                                            <div class="collaboration-type">
+                                                <select class="select-collaboration">
+                                                    <option selected disabled value="{{function.collaboration_type}}">{{function.collaboration_type}}</option>
+                                                    <option>Synchronous (prima umano)</option>
+                                                    <option>Synchronous (prima robot)</option>
+                                                    <option>Supportive</option>
+                                                    <option>Independent</option>
+                                                    <option>Simultaneous</option>
+                                                </select>
+                                            </div>
+                                            <div class="assigned-to">
+                                                <select class="select-operator">
+                                                    <option selected disabled value="{{function.assigned_to}}">{{function.assigned_to}}</option>
+                                                    <option>Robot</option>
+                                                    <option>Human</option>
+                                                    <option>Indifferente</option>
+                                                    <option disabled>Human/Robot</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+
+                                <div class="process-task" title="Covers removal">
+                                    <div class="task-name">
+                                        Task 1 - Covers removal
+                                    </div>
+
+                                    <div class="task-description" title="Unscrew bolts">
+                                        <div class="function">
+                                            <div class="function-name">
+                                                Unscrew the bolts in the covers 
+                                                and remove them
+                                            </div>
+                                            <div class="assigned-to">
+                                                <select class="select-operator">
+                                                    <option>Robot</option>
+                                                    <option selected>Human</option>
+                                                    <option>Human/Robot</option>
+                                                </select>
+                                            </div>
+                                            <div class="collaboration-type">
+                                                <select class="select-collaboration">
+                                                    <option>Synchronous</option>
+                                                    <option>Supportive</option>
+                                                    <option selected>Independent</option>
+                                                    <option>Simultaneous</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="new-task">
+                                    <img src="https://img.icons8.com/cotton/64/000000/plus--v3.png">
+                                </div>
+                                <div class="task">
+                                    <div id="task-form">
+
+                                        <div>
+                                            <input type="text" id="new-name" placeholder="Inserisci il nome del task" />
+                                            <input type="text" id="new-description" placeholder="E una breve descrizione" />
+                                        </div>
+
+                                        <div id="results"></div>
+
+                                        <div class="sub-task-form">
+                                            <label>Tipo di sub-task:</label>
+                                            <select id="f-new-type">
+                                                <option selected>Manipolazione</option>
+                                                <option>Spostamento</option>
+                                            </select>
+                                            <label class="handle">In posizione</label>
+                                            <label class="move">Dalla posizione</label>
+                                            <select class="pos" id="pos"></select>
+                                            <label class="move">alla</label>
+                                            <select class="move pos" id="pos1"></select>
+                                        </div>
+                                        <div class="sub-task-form">
+                                            <label class="handle">Con che modalità collaborativa?</label>
+                                            <select id="new-collab" class="select-collaboration handle" name="collaboration">
+                                                <option>Synchronous (prima umano)</option>
+                                                <option>Synchronous (prima robot)</option>
+                                                <option selected>Supportive</option>
+                                                <option>Independent</option>
+                                                <option>Simultaneous</option>
+                                            </select>
+                                            <label class="move indep">Da chi deve essere svolto?</label>
+                                            <select id="new-operator" class="select-operator indep move" name="operator">
+                                                <option>Robot</option>
+                                                <option selected>Human</option>
+                                                <option>Indifferente</option>
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <button type="reset" id="func">Aggiungi sub-task</button>
+                                        </div >
+                                        <button type="button" id="sub">Inserisci task</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+
+            </div>
+
+            <form method="POST" action="/salva">
+                <div id="nPos">
+                    Seleziona il numero di posizioni
+                    <select title="Numero posizioni" name="n_positions" id="n_positions" >
+                        <option selected disabled>{{nPos}}</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                    </select>
+                </div>
+                <button class="submit" type="submit">Salva dominio</button>
+            </form>
+        </div>
+        
+        <div id="footer">
+        </div>
+        
+    </body>
+</html>

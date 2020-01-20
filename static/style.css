@@ -1,0 +1,254 @@
+body
+{
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+    background-color: white;
+    min-width: 500px;
+}
+
+#content
+{
+    margin: 0px;
+    padding: 0px;
+    width: 98%;
+    margin-left: 1%;
+}
+
+#header 
+{
+    margin: 0;
+    padding: 2%;
+    min-height: 100px;
+}
+
+
+#footer 
+{    
+    margin: 0;
+    margin-top: 100px;
+    padding: 2%;
+    padding-top: 5%;
+    border: none;
+    background-color: white;
+    min-height: 100px;
+}
+
+#footer p
+{
+    color: white;
+    font-size: small;
+    margin: 0px;
+    padding: 0px;
+    padding-top: 30px;
+    margin-bottom: 5%;
+}
+
+.section 
+{
+    width: 98%;
+    margin:0;
+    padding: 1%;
+    padding-top: 0.1%;
+    padding-bottom: 0.1%;
+    border: 1px solid grey;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 5px lightgrey;
+}
+
+#insert {
+    background-color: dimgrey;
+    
+}
+
+#insert .section-title {
+    background-color: dimgrey;
+    color: white;
+}
+
+#insert .section-content {
+    background-color: dimgrey;
+    color: white;
+}
+
+.section .section-title 
+{   
+    margin: 0;
+    padding: 1%;
+    font-size: x-large;
+    font-weight: bold;
+    border-bottom: 1px solid lightgray;
+    background-color: white;
+}
+
+.section .section-content 
+{
+    margin: 0;
+    padding: 1%;
+    align-content: center;
+    text-align: justify;
+    background-color: white;
+}
+
+.section-content .section-item
+{
+    margin: 0;
+    padding: 0;
+    margin-top: 1%;
+    margin-bottom: 2%;
+    background-color: white;
+}
+
+.section-item .process {
+    width: 98%;
+    margin: 0;
+    padding: 1%;
+    background-color: dimgray;
+    color: white;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px 5px lightgrey;
+}
+
+.process .process-name {
+    margin: 0;
+    padding: 0;
+    margin-bottom: 1%;
+    font-weight: bold;
+    font-size: larger;
+    border-bottom: 1px solid lightgrey;
+    cursor: pointer;
+}
+
+.process-description {
+    width: 98%;
+    margin: 0;
+    padding: 1%;
+}
+
+.process .process-task {
+    width: 98%;
+    margin: 0;
+    padding: 1%;
+    padding-top: 0.5%;
+    padding-bottom: 0.5%;
+}
+
+.process-task .task-name {
+    margin: 0;
+    padding: 0;
+    margin-bottom: 1%;
+    font-size: large;
+    font-weight: bold;
+    border-bottom: 1px solid lightgrey;
+    cursor: pointer;
+}
+
+.process-task .task-description {
+    width: 98%;
+    padding: 1%;
+    margin: 0;
+}
+
+.task-description .function {
+    width: 98%;
+    padding-left: 2%;
+    padding-top: 0.5%;
+    padding-bottom: 0.5%;
+    display: block;
+}
+
+.function .type {
+    width: 26%;
+    margin: 0;
+    padding: 0;
+    padding-top: 0.2%;
+    padding-bottom: 0.2%;
+    margin-top: 0.5%;
+    margin-bottom: 0.5%;
+    display: inline-block;
+    font-size: large;
+    border: 1px solid lightgrey;
+    background-color: white;
+    overflow: hidden;
+    white-space: nowrap;
+    color: black;
+}
+
+.function .position,
+.function .assigned-to, 
+.function .collaboration-type {
+    width: 23%;
+    margin: 0;
+    padding: 0;
+    padding-top: 0.2%;
+    padding-bottom: 0.2%;
+    margin-top: 0.5%;
+    margin-bottom: 0.5%;
+    display: inline-block;
+    float: inside;
+    font-size: large;
+    border: 1px solid lightgrey;
+    background-color: white;
+    overflow: hidden;
+    white-space: nowrap;
+    color: black;
+    text-align: center;
+}
+
+.function .function-name,
+.function .function-pos {
+    margin: 0;
+    padding: 0;
+    padding-left: 2%;
+    padding-top: 0.2%;
+    padding-bottom: 0.2%;
+    margin-top: 0.5%;
+    margin-bottom: 0.5%;
+    display: inline-block;
+    border: none;
+    font-size: smaller;
+    background-color: white;
+    white-space: nowrap;
+    cursor: pointer;
+    background-color: white;
+    color: black;
+}
+
+.function .select-pos {
+    border: none;
+}
+
+.function .select-type,
+.function .select-collaboration, 
+.function .select-operator {
+    width: 98%; 
+    margin: 0;
+    padding: 0%;
+    padding-left: 2%;
+    border: none;
+    font-size: medium;
+    font-weight: bold;
+    background-color: white;
+    overflow: hidden;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.submit {
+    font-size: large;
+    margin-left: 2.5%;
+    margin-top: 1%;
+    box-shadow: lightgray;
+}
+
+.sub-task-form {
+    margin: 1.2%;   
+}
+
+#nPos {
+    font-size: medium;
+    margin-left: 2.5%;
+    margin-top: 1.5%;
+}
