@@ -21,7 +21,7 @@ $(document).ready(function() {
        $(this).parent(".process").find(".task-description").hide();
     });
     $(".task-name").click(function() {
-        // display taks description
+        // display task description
         $(this).siblings(".task-description").fadeToggle("fast");
     });
 
@@ -61,9 +61,7 @@ $(document).ready(function() {
             modality.prop("selectedIndex", 0);
             modality.prop("disabled", false);
 
-            //QUESTA NON FUNZIONA QUANDO INDEPENDENT
-            //E' LA VARIABILE FLASK
-            if (modality.value === "Independent") {
+            if (modality[0].value === "Independent") {
                 //restore original operator
                 operator.prop("selectedIndex", 0);
                 if(operator.value === "Human/Robot"){
@@ -102,18 +100,15 @@ $(document).ready(function() {
             operator.prop("disabled", true);
         }
     });
-        //QUESTA NON FUNZIONA QUANDO INDEPENDENT
-        //E' LA VARIABILE FLASK
     $(".select-collaboration").change(function(){
         var operator = $(this).parent().siblings(".assigned-to").children(".select-operator");
         if (this.value === "Independent") {
             //restore original operator
             operator.prop("selectedIndex", 0);
-            if($(".select-operator").value === "Human/Robot"){
+            if(operator[0].value === "Human/Robot"){
                 // set robot as operator
                 operator.prop("selectedIndex", 1);
             }
-            console.log($(".select-operator").value);
             operator.prop("disabled", false);
         }
         else {
@@ -165,11 +160,12 @@ $(document).ready(function() {
     *   Display new task form or popup
     ***************************************/
     $(".new-task").click(function() {
-        if(nPos === undefined) {
+        if(sessionStorage.getItem("nPos") === null) {
             window.alert("Inserisci il numero di posizioni!");
         }
         else {
             $(this).siblings(".task").fadeToggle("fast");
+            $(".sub-task-form").hide();
         }
     });
 
@@ -177,8 +173,30 @@ $(document).ready(function() {
     /*******************************************
     *   Display/Hide input fields of each task
     ********************************************/
+    $("#new-collaboration").change(function(){
+        $(".sub-task-form").show();
+        if(this.value == "Independent" || this.value == "Synchronous"){
+            $("#f-new-type").prop("disabled", false);
+            $("#new-operator").prop("selectedIndex", 0);
+            $("#new-operator").prop("disabled", false);            
+        }
+        
+        // Simultaneous or Supportive modality
+        else {
+            // set Manipulation as default type
+            $("#f-new-type").prop("selectedIndex", 1);
+            $("#f-new-type").prop("disabled", true);
+
+            $(".move").hide();
+            $(".handle").show();
+
+            // set Human/Robot as default operator
+            $("#new-operator").prop("selectedIndex", 4);
+            $("#new-operator").prop("disabled", true);
+        }
+    });
+
     $(".move").hide();
-    $(".indep").hide();
     $("#f-new-type").show(function(){
         if (this.value === "Spostamento") {
             $(".handle").hide();
@@ -199,33 +217,16 @@ $(document).ready(function() {
             $(".handle").show();
         }
     });
-    $("#new-collab").show(function(){
-        if(this.value === "Independent") {
-            $(".indep").show();
-        }
-        else {
-            $(".indep").hide();
-        }
-    });
-    $("#new-collab").change(function(){
-        if(this.value === "Independent") {
-            $(".indep").show();
-        }
-        else {
-            $(".indep").hide();
-        }
-    });
-
+    
     var lista = [];
 
     var SubTask = class SubTask {
-        constructor(id, type, pos, pos1, operator, collab) {
+        constructor(id, type, pos, pos1, operator) {
             this.id = id;
             this.type = type;
             this.pos = pos;
             this.pos1 = pos1;
             this.operator = operator;
-            this.collab = collab;
         }
     };
 
@@ -237,37 +238,35 @@ $(document).ready(function() {
           //take the elements
           var type = (document.getElementById("f-new-type").value);
           var pos = (document.getElementById("pos").value);
+          var operator = (document.getElementById("new-operator").value);
           if (type === "Spostamento") {
             var pos1 = (document.getElementById("pos1").value);
-            var collab = "Independent";
-            var operator = (document.getElementById("new-operator").value);
           }
           else {
             var pos1 = 0
-            var collab = (document.getElementById("new-collab").value);
-            if (collab === "Independent") {
-                var operator = (document.getElementById("new-operator").value);
-            }
-            else {
-                var operator = "Human/Robot";
-            }
           }
 
-          var tmp = new SubTask(count, type, pos, pos1, operator, collab);
+          var tmp = new SubTask(count, type, pos, pos1, operator);
           lista.push(tmp);
 
           //display the new subtask
-          $("#results").append("<p>Sub-task di tipo: " + type + pos + pos1 + " Assegnato a: " + operator +" Con modalità: " +collab + "</p>");
+          $("#results").append("<p>Sub-task di tipo: " + type + pos + pos1 + " Assegnato a: " + operator + "</p>");
 
-          //reset the values of subtask form
-          $("#f-new-type").prop('selectedIndex', 0);
-          $("#new-operator").prop('selectedIndex', 1);
-          $("#new-collab").prop('selectedIndex', 1);
-          $(".handle").show();
-          $(".move").hide();
-          $(".indep").hide();
-
+          var col = (document.getElementById("new-operator").value);
+          if (col === "Independent" || col === "Synchronous") {
+            //reset the values of subtask form
+            $("#f-new-type").prop('selectedIndex', 0);
+            $("#new-operator").prop('selectedIndex', 0);
+            $(".handle").show();
+            $(".move").hide();
+            $(".indep").hide();
+          }
+          
           count += 1;
+
+          //block the number of positions and the collaboration modality
+          $("#n_positions").prop("disabled", true); 
+          $("#new-collaboration").prop("disabled", true);
     });
 
 
@@ -277,8 +276,8 @@ $(document).ready(function() {
     $("#sub").click(function(){
         //take the elements
         var nomeTask = document.getElementById("new-name").value;
-        var descTask = document.getElementById("new-description").value;
-        lista.push({"taskName": nomeTask, "descTask": descTask});
+        var collab = document.getElementById("new-collaboration").value;
+        lista.push({"taskName": nomeTask, "collab": collab});
         //create the json data
         var js_data = JSON.stringify(lista);
           $.ajax({                        
@@ -292,14 +291,21 @@ $(document).ready(function() {
          });
     });
 
-    var nPos;
+    $("#n_positions").show(function() {
+        if (sessionStorage.getItem("nPos") !== null) {
+            this.value = sessionStorage.getItem("nPos");
+            $("#n_positions").prop("disabled", true);
+        }
+        else {
+            $("#n_positions").prop("disabled", false);
+        }
+    });
     //change #positions
     $("#n_positions").change(function() {
-        nPos = this.value;
-        console.log(nPos);
+        sessionStorage.setItem("nPos", this.value);
 
         //add options to select-position
-        for (var i=0; i<nPos; i++){
+        for (var i=0; i<sessionStorage.getItem("nPos"); i++){
             $(".pos").append("<option>" + (i+1).toString() + "</option>");
         }
     });

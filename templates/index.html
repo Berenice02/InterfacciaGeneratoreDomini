@@ -44,9 +44,18 @@ and open the template in the editor.
                                 {% for element in lista %}
                                 <div class="process-task" title="{{element.name}}">
                                     <div class="task-name">
-                                        {{element.name}} - {{element.description}}
+                                        <label class="task-title">{{element.name}} - </label>
+                                        <div class="collaboration-type">
+                                            <select class="select-collaboration">
+                                                <option selected disabled value="{{element.collaboration_type}}">{{element.collaboration_type}}</option>
+                                                <option>Synchronous</option>
+                                                <option>Supportive</option>
+                                                <option>Independent</option>
+                                                <option>Simultaneous</option>
+                                            </select>
+                                        </div>
                                     </div>
-
+                                    
                                     <div class="task-description" title="{{element.name}}">
                                         {% for function in element.functions %}
                                         <div class="function">
@@ -68,16 +77,6 @@ and open the template in the editor.
                                                     <option selected disabled>{{function.pos1}}</option>
                                                 </select>
                                             </div>
-                                            <div class="collaboration-type">
-                                                <select class="select-collaboration">
-                                                    <option selected disabled value="{{function.collaboration_type}}">{{function.collaboration_type}}</option>
-                                                    <option>Synchronous (prima umano)</option>
-                                                    <option>Synchronous (prima robot)</option>
-                                                    <option>Supportive</option>
-                                                    <option>Independent</option>
-                                                    <option>Simultaneous</option>
-                                                </select>
-                                            </div>
                                             <div class="assigned-to">
                                                 <select class="select-operator">
                                                     <option selected disabled value="{{function.assigned_to}}">{{function.assigned_to}}</option>
@@ -93,36 +92,6 @@ and open the template in the editor.
                                 </div>
                                 {% endfor %}
 
-                                <div class="process-task" title="Covers removal">
-                                    <div class="task-name">
-                                        Task 1 - Covers removal
-                                    </div>
-
-                                    <div class="task-description" title="Unscrew bolts">
-                                        <div class="function">
-                                            <div class="function-name">
-                                                Unscrew the bolts in the covers 
-                                                and remove them
-                                            </div>
-                                            <div class="assigned-to">
-                                                <select class="select-operator">
-                                                    <option>Robot</option>
-                                                    <option selected>Human</option>
-                                                    <option>Human/Robot</option>
-                                                </select>
-                                            </div>
-                                            <div class="collaboration-type">
-                                                <select class="select-collaboration">
-                                                    <option>Synchronous</option>
-                                                    <option>Supportive</option>
-                                                    <option selected>Independent</option>
-                                                    <option>Simultaneous</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <div class="new-task">
                                     <img src="https://img.icons8.com/cotton/64/000000/plus--v3.png">
                                 </div>
@@ -131,7 +100,14 @@ and open the template in the editor.
 
                                         <div>
                                             <input type="text" id="new-name" placeholder="Inserisci il nome del task" />
-                                            <input type="text" id="new-description" placeholder="E una breve descrizione" />
+                                            <label>E la modalità collaborativa</label>
+                                            <select id="new-collaboration" name="collaboration">
+                                                <option selected disabled></option>
+                                                <option>Synchronous</option>
+                                                <option>Supportive</option>
+                                                <option>Independent</option>
+                                                <option>Simultaneous</option>
+                                            </select>
                                         </div>
 
                                         <div id="results"></div>
@@ -139,7 +115,8 @@ and open the template in the editor.
                                         <div class="sub-task-form">
                                             <label>Tipo di sub-task:</label>
                                             <select id="f-new-type">
-                                                <option selected>Manipolazione</option>
+                                                <option selected disabled></option>
+                                                <option>Manipolazione</option>
                                                 <option>Spostamento</option>
                                             </select>
                                             <label class="handle">In posizione</label>
@@ -149,19 +126,13 @@ and open the template in the editor.
                                             <select class="move pos" id="pos1"></select>
                                         </div>
                                         <div class="sub-task-form">
-                                            <label class="handle">Con che modalità collaborativa?</label>
-                                            <select id="new-collab" class="select-collaboration handle" name="collaboration">
-                                                <option>Synchronous (prima umano)</option>
-                                                <option>Synchronous (prima robot)</option>
-                                                <option selected>Supportive</option>
-                                                <option>Independent</option>
-                                                <option>Simultaneous</option>
-                                            </select>
-                                            <label class="move indep">Da chi deve essere svolto?</label>
-                                            <select id="new-operator" class="select-operator indep move" name="operator">
+                                            <label>Da chi deve essere svolto?</label>
+                                            <select id="new-operator" name="operator">
+                                                <option selected disabled></option>
                                                 <option>Robot</option>
-                                                <option selected>Human</option>
+                                                <option>Human</option>
                                                 <option>Indifferente</option>
+                                                <option disabled>Human/Robot</option>
                                             </select>
                                         </div>
 

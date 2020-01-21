@@ -4,22 +4,21 @@ app = Flask(__name__)
 
 #classe dei task
 class Task:
-    def __init__(self, name, description, functions):
+    def __init__(self, name, collaboration_type, functions):
         self.name = name
-        self.description = description
+        self.collaboration_type = collaboration_type
         self.functions = functions
 #e delle funzioni di ogni task
 class Function:
-    def __init__(self, type, pos, pos1, assigned_to, collaboration_type):
+    def __init__(self, id, type, pos, pos1, assigned_to):
+        self.id = id
         self.type = type
         self.pos = pos
         self.pos1 = pos1
         self.assigned_to = assigned_to
-        self.collaboration_type = collaboration_type
-
 
 #lista di task
-lista = [Task("T1", "Ok", [Function("Manipolazione", "1", "0", "Human/Robot", "Supportive"), Function("Spostamento", "1", "3", "Robot", "Independent")]), Task("T2", "Cosi", []), Task("T3", "Lupo", [])]
+lista = [Task("T1", "Supportive", [Function("0", "Manipolazione", "1", "0", "Human/Robot"), Function("1", "Manipolazione", "2", "0", "Human/Robot")]), Task("T2", "Independent", [Function("0", "Spostamento", "1", "3", "Robot")]), Task("T3", "Lupo", [])]
 numeroDominio = 0
 
 #pagina iniziale
@@ -36,21 +35,47 @@ def aggiungi():
 
     #aggiunta di tutte le function a una lista
     for i in range(len(data)-1):
+        f_id = data[i]["id"]
         f_type = data[i]["type"]
         f_pos = data[i]["pos"]
         f_pos1 = data[i]["pos1"]
         f_operator = data[i]["operator"]
-        f_collaboration = data[i]["collab"]
-        func = Function(f_type, f_pos, f_pos1, f_operator, f_collaboration)
+        func = Function(f_id, f_type, f_pos, f_pos1, f_operator)
         functions.append(func)
 
-    name = data[len(data)-1]["taskName"].strip().capitalize()
-    description = data[len(data)-1]["descTask"].strip().capitalize()
-    task = Task(name, description, functions)
+    name = data[-1]["taskName"].strip().capitalize()
+    collaboration = data[-1]["collab"]
+    task = Task(name, collaboration, functions)
     #aggiunta del task alla lista
     lista.append(task)
-
     return render_template("index.html", lista=lista)
+
+
+def aggiungiIndValue(op, task, function):
+    tmp = "\t\t\tt" + str(function.id) + " <!> " 
+    if( function.operator == "Human"):
+        tmp += "HumanProcess.process._"
+    if( function.operator == "Robot"):
+        tmp += "RoboticProcess.process."
+    if( function.type == "Manipolazione"):
+        tmp += "Task_manipolazione(?loc" + str(id) + ");\n"
+        tmp += "\t\t\t?loc" + str(function.id) + " = Pos" + str(function.pos) + ";\n"
+        # Se l'operatore è solo robot o solo umano la manipolazione è per forza independent
+        tmp += "\t\t\t\tp" + str(function.id) + " <!> Pos" + str(function.pos) + ".position.REQUIREMENT(?amountP" + str(function.id) + ");\n"
+        tmp += "\t\t\t\t?amountP" + str(function.id) + " = 2;\n"
+        tmp += "\t\t\t\tp" + str(function.id) + " EQUALS t" + str(function.id) + ";\n"
+    if( function.type == "Spostamento"):
+        tmp += "Task_spostamento(?from" + str(function.id) + "?to" + str(id) + ");\n"
+        tmp += "\t\t\t?from" + str(function.id) + " = Pos" + str(function.pos) + ";\n"
+        tmp += "\t\t\t?to" + str(function.id) + " = Pos" + str(function.pos1) + ";\n"
+        # Se l'operatore è solo robot o solo umano la manipolazione è per forza independent
+        tmp += "\t\t\t\ts" + str(function.id) + " <!> Pos" + str(function.pos) + ".position.REQUIREMENT(?amountS" + str(function.id) + ");\n"
+        tmp += "\t\t\t\t?amountS" + str(function.id) + " = 2;\n"
+        tmp += "\t\t\t\ts" + str(function.id) + " EQUALS t" + str(function.id) + ";\n"
+        tmp += "\t\t\t\td" + str(function.id) + " <!> Pos" + str(function.pos) + ".position.REQUIREMENT(?amountD" + str(function.id) + ");\n"
+        tmp += "\t\t\t\t?amountD" + str(function.id) + " = 2;\n"
+        tmp += "\t\t\t\td" + str(function.id) + " EQUALS t" + str(function.id) + ";\n"
+        return tmp
 
 
 
@@ -95,48 +120,29 @@ def salva():
         SYN_Cembre += "\t\t\ttask" + str(i) + " BEFORE [0, +INF] task" + str(i+1) + ";\n"
     SYN_Cembre += "\t\t}\n\t}\n\n"
 
+
     #SYNCHRONIZE AssemblyProcess.tasks
-    # SYN_Task = "\tSYNCHRONIZE AssemblyProcess.tasks {\n"
-    # for task in lista:
-    #     SYN_Task += "\t\tVALUE " + task.name + "() {\n"
-    #     for function in element.functions:
-    #         SYN_Task += "\t\t\tm CollaborationType.modality." + function.collaboration_type + "();\n"
-    #         if (function.human == "manipolazione"):
-    #             SYN_Task += "\t\t\tt1 <!> HumanProcess.process._Task_manipolazione(?loc1);\n"
-    #             SYN_Task += "\t\t\t?loc1 = " + function.positionH + ";\n"
-    #             SYN_Task += "\t\t\t\tb1 <!> " + function.positionH + ".position.REQUIREMENT(?amount1);\n"
-    #             if (function.collaboration_type == "Independent" | function.collaboration_type == "Synchronous"):
-    #                 SYN_Task += "\t\t\t\t?amount1 = 2;\n"
-    #             else:
-    #                 SYN_Task += "\t\t\t\t?amount1 = 1;\n"
-    #             SYN_Task += "\t\t\tb1 EQUALS t1;\n" 
-    #             SYN_Task += "\n\t\t\tm CONTAINS [0, +INF] [0, +INF] t1;\n"
-    #             SYN_Task += "\n\t\t\tCONTAINS [0, +INF] [0, +INF] t1;\n"
-    #         else:
-    #             print("1")
-    #         if(function.robot == "manipolazione"):
-    #             SYN_Task += "\t\t\tt2 <!> RoboticProcess.process.Task_manipolazione(?loc2);\n"
-    #             SYN_Task += "\t\t\t?loc2 = " + function.positionR + ";\n"
-    #             SYN_Task += "\t\t\t\tb2 <!> " + function.positionR + ".position.REQUIREMENT(?amount2);\n"
-    #             if (function.collaboration_type == "Independent" | function.collaboration_type == "Synchronous"):
-    #                 SYN_Task += "\t\t\t\t?amount2 = 2;\n"
-    #             else:
-    #                 SYN_Task += "\t\t\t\t?amount2 = 1;\n"
-    #             SYN_Task += "\t\t\tb2 EQUALS t2;\n" 
-    #             SYN_Task += "\n\t\t\tm CONTAINS [0, +INF] [0, +INF] t2;\n"
-    #             SYN_Task += "\n\t\t\tCONTAINS [0, +INF] [0, +INF] t2;\n"
-    #         else:
-    #             print("2")
-    #         if(function.collaboration_type == "Synchronous (prima umano)"):
-    #             SYN_Task += "\n\t\t\tt1 BEFORE [0, +INF] t2;\n"
-    #         if(function.collaboration_type == "Synchronous (prima robot)"):
-    #             SYN_Task += "\n\t\t\tt2 BEFORE [0, +INF] t1;\n"
-    #         if(function.collaboration_type == "Supportive"):
-    #             SYN_Task += "\n\t\t\tt1 EQUALS t2;\n"
+    SYN_Task = "\tSYNCHRONIZE AssemblyProcess.tasks {\n"
+    for task in lista:
+        SYN_Task += "\t\tVALUE " + task.name + "() {\n"
+        for function in element.functions:
+            if (function.operator == "Human/Robot"):
+                print("ok")
+            if (function.operator == "Robot"):
+                SYN_Task += aggiungiIndValue("Robot", task, function)
+            if(function.operator == "Human"):
+                SYN_Task += aggiungiIndValue("Human", task, function)
+            if(function.operator == "Indifferente"):
+                print("ok")
 
-
-    #     SYN_Task += "\t\t}\n"
-    # SYN_Task += "\t}\n"
+        #aggiungo la modalità collaborativa e i vincoli
+        SYN_Task += "\n\t\t\tm CollaborationType.modality." + task.collaboration_type + "();\n"
+        for i in range(len(element.functions)):
+            SYN_Task += "m CONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
+            SYN_Task += "CONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
+        SYN_Task += "\t\t}\n"
+                        
+    SYN_Task += "\t}\n"
 
 
 
@@ -163,6 +169,7 @@ def salva():
     return render_template("success.html", file=tmp)
 
     #reinizializzazione della lista per il nuovo dominio
+    #session.clear()
     #lista.clear()
 
 if __name__ == '__main__':

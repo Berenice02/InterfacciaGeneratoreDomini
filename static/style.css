@@ -139,10 +139,17 @@ body
     margin: 0;
     padding: 0;
     margin-bottom: 1%;
-    font-size: large;
-    font-weight: bold;
     border-bottom: 1px solid lightgrey;
     cursor: pointer;
+}
+
+.task-name .task-title {
+    font-size: large;
+    font-weight: bold;
+}
+
+.task-name .collaboration-type {
+    display: inline-block;
 }
 
 .process-task .task-description {
@@ -177,8 +184,7 @@ body
 }
 
 .function .position,
-.function .assigned-to, 
-.function .collaboration-type {
+.function .assigned-to {
     width: 23%;
     margin: 0;
     padding: 0;
