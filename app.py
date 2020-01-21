@@ -18,7 +18,7 @@ class Function:
         self.assigned_to = assigned_to
 
 #lista di task
-lista = [Task("T1", "Supportive", [Function("0", "Manipolazione", "1", "0", "Human/Robot"), Function("1", "Manipolazione", "2", "0", "Human/Robot")]), Task("T2", "Independent", [Function("0", "Spostamento", "1", "3", "Robot")]), Task("T3", "Lupo", [])]
+lista = [Task("T1", "Supportive", [Function("0", "Manipolazione", "1", "0", "Human/Robot"), Function("1", "Manipolazione", "2", "0", "Human/Robot")]), Task("T2", "Independent", [Function("0", "Spostamento", "1", "3", "Robot")])]
 numeroDominio = 0
 
 #pagina iniziale
@@ -51,38 +51,55 @@ def aggiungi():
     return render_template("index.html", lista=lista)
 
 
-def aggiungiIndValue(op, task, function):
+#funzione che aggiunge un task se la modalità è Independent o Synchronous
+def aggiungiIndValue(function):
     tmp = "\t\t\tt" + str(function.id) + " <!> " 
-    if( function.operator == "Human"):
+    if( function.assigned_to == "Human"):
         tmp += "HumanProcess.process._"
-    if( function.operator == "Robot"):
+    if( function.assigned_to == "Robot"):
         tmp += "RoboticProcess.process."
     if( function.type == "Manipolazione"):
-        tmp += "Task_manipolazione(?loc" + str(id) + ");\n"
+        tmp += "Task_manipolazione(?loc" + str(function.id) + ");\n"
         tmp += "\t\t\t?loc" + str(function.id) + " = Pos" + str(function.pos) + ";\n"
-        # Se l'operatore è solo robot o solo umano la manipolazione è per forza independent
         tmp += "\t\t\t\tp" + str(function.id) + " <!> Pos" + str(function.pos) + ".position.REQUIREMENT(?amountP" + str(function.id) + ");\n"
         tmp += "\t\t\t\t?amountP" + str(function.id) + " = 2;\n"
         tmp += "\t\t\t\tp" + str(function.id) + " EQUALS t" + str(function.id) + ";\n"
     if( function.type == "Spostamento"):
-        tmp += "Task_spostamento(?from" + str(function.id) + "?to" + str(id) + ");\n"
+        tmp += "Task_spostamento(?from" + str(function.id) + ", ?to" + str(function.id) + ");\n"
         tmp += "\t\t\t?from" + str(function.id) + " = Pos" + str(function.pos) + ";\n"
         tmp += "\t\t\t?to" + str(function.id) + " = Pos" + str(function.pos1) + ";\n"
         # Se l'operatore è solo robot o solo umano la manipolazione è per forza independent
         tmp += "\t\t\t\ts" + str(function.id) + " <!> Pos" + str(function.pos) + ".position.REQUIREMENT(?amountS" + str(function.id) + ");\n"
         tmp += "\t\t\t\t?amountS" + str(function.id) + " = 2;\n"
         tmp += "\t\t\t\ts" + str(function.id) + " EQUALS t" + str(function.id) + ";\n"
-        tmp += "\t\t\t\td" + str(function.id) + " <!> Pos" + str(function.pos) + ".position.REQUIREMENT(?amountD" + str(function.id) + ");\n"
+        tmp += "\t\t\t\td" + str(function.id) + " <!> Pos" + str(function.pos1) + ".position.REQUIREMENT(?amountD" + str(function.id) + ");\n"
         tmp += "\t\t\t\t?amountD" + str(function.id) + " = 2;\n"
         tmp += "\t\t\t\td" + str(function.id) + " EQUALS t" + str(function.id) + ";\n"
-        return tmp
+    return tmp
 
+#funzione che aggiunge un task se la modalità è Simultaneous o Supportive
+#In queste modalità robot e umano coesistono sempre
+#E il task è sempre manipolazione
+def aggiungiSuppValue(function):
+    tmp = "\t\t\th" + str(function.id) + " <!> HumanProcess.process._Task_manipolazione(?hloc" + str(function.id) + ");\n" 
+    tmp += "\t\t\t?hloc" + str(function.id) + " = Pos" + str(function.pos) + ";\n"
+    tmp += "\t\t\t\thp" + str(function.id) + " <!> Pos" + str(function.pos) + ".position.REQUIREMENT(?amountH" + str(function.id) + ");\n"
+    tmp += "\t\t\t\t?amountH" + str(function.id) + " = 1;\n"
+    tmp += "\t\t\t\thp" + str(function.id) + " EQUALS h" + str(function.id) + ";\n"
+
+    tmp += "\t\t\tr" + str(function.id) + " <!> RoboticProcess.process.Task_manipolazione(?rloc" + str(function.id) + ");\n" 
+    tmp += "\t\t\t?rloc" + str(function.id) + " = Pos" + str(function.pos) + ";\n"
+    tmp += "\t\t\t\trp" + str(function.id) + " <!> Pos" + str(function.pos) + ".position.REQUIREMENT(?amountR" + str(function.id) + ");\n"
+    tmp += "\t\t\t\t?amountR" + str(function.id) + " = 1;\n"
+    tmp += "\t\t\t\trp" + str(function.id) + " EQUALS r" + str(function.id) + ";\n"
+
+    return tmp
 
 
 #salvataggio del dominio in un file
-@app.route('/salva', methods=['GET', 'POST'])
+@app.route('/salva', methods=['POST'])
 def salva():
-    pos = int(request.form["n_positions"])
+    pos = int(request.form.get('pos_form'))
 
     #Posizioni
     Positions = "//Enumeration Parameter\n\tPAR_TYPE EnumerationParameterType location = { "
@@ -126,24 +143,41 @@ def salva():
     for task in lista:
         SYN_Task += "\t\tVALUE " + task.name + "() {\n"
         for function in element.functions:
-            if (function.operator == "Human/Robot"):
-                print("ok")
-            if (function.operator == "Robot"):
-                SYN_Task += aggiungiIndValue("Robot", task, function)
-            if(function.operator == "Human"):
-                SYN_Task += aggiungiIndValue("Human", task, function)
-            if(function.operator == "Indifferente"):
-                print("ok")
+            if(task.collaboration_type == "Independent" or task.collaboration_type == "Synchronous"):
+                if(function.assigned_to != "Indifferente"):
+                    SYN_Task += aggiungiIndValue(function)
+                else:
+                    print ("ahh")
+            else:
+                SYN_Task += aggiungiSuppValue(function)
+                print("primo")
 
         #aggiungo la modalità collaborativa e i vincoli
         SYN_Task += "\n\t\t\tm CollaborationType.modality." + task.collaboration_type + "();\n"
         for i in range(len(element.functions)):
-            SYN_Task += "m CONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
-            SYN_Task += "CONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
+            if(task.collaboration_type == "Independent"):
+                SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
+                SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
+            if(task.collaboration_type == "Synchronous" and i<len(element.functions)-1):
+                SYN_Task += "\t\t\tt" + str(i) + " BEFORE [0, +INF] t" + str(i+1) + ";\n"
+                SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
+                SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
+                #manca l'ultimo
+            if(task.collaboration_type == "Simultaneous"):
+                SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] h" + str(i) + ";\n"
+                SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] r" + str(i) + ";\n"
+                SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] h" + str(i) + ";\n"
+                SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] r" + str(i) + ";\n"
+            if(task.collaboration_type == "Supportive"):
+                SYN_Task += "\t\t\th" + str(i) + " EQUALS r" + str(i) + ";\n"
+                SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] h" + str(i) + ";\n"
+                SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] r" + str(i) + ";\n"
+                SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] h" + str(i) + ";\n"
+                SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] r" + str(i) + ";\n"
+            
         SYN_Task += "\t\t}\n"
                         
     SYN_Task += "\t}\n"
-
 
 
     #salvataggio
@@ -159,6 +193,7 @@ def salva():
             f.write(Positions)
             f.write(SV_AssemblyProcess)
             f.write(SYN_Cembre)
+            f.write(SYN_Task)
 
             #chiusura parentesi generale
             f.write("\n}")

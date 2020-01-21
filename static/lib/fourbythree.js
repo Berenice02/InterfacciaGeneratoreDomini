@@ -295,6 +295,8 @@ $(document).ready(function() {
         if (sessionStorage.getItem("nPos") !== null) {
             this.value = sessionStorage.getItem("nPos");
             $("#n_positions").prop("disabled", true);
+            
+            document.getElementById("pos_form").value = sessionStorage.getItem("nPos");
         }
         else {
             $("#n_positions").prop("disabled", false);

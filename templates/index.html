@@ -48,10 +48,10 @@ and open the template in the editor.
                                         <div class="collaboration-type">
                                             <select class="select-collaboration">
                                                 <option selected disabled value="{{element.collaboration_type}}">{{element.collaboration_type}}</option>
-                                                <option>Synchronous</option>
-                                                <option>Supportive</option>
                                                 <option>Independent</option>
+                                                <option>Synchronous</option>
                                                 <option>Simultaneous</option>
+                                                <option>Supportive</option>
                                             </select>
                                         </div>
                                     </div>
@@ -103,10 +103,10 @@ and open the template in the editor.
                                             <label>E la modalità collaborativa</label>
                                             <select id="new-collaboration" name="collaboration">
                                                 <option selected disabled></option>
-                                                <option>Synchronous</option>
-                                                <option>Supportive</option>
                                                 <option>Independent</option>
+                                                <option>Synchronous</option>
                                                 <option>Simultaneous</option>
+                                                <option>Supportive</option>
                                             </select>
                                         </div>
 
@@ -147,27 +147,28 @@ and open the template in the editor.
                         </div>
                         
                     </div>
+                    <div id="nPos">
+                        Seleziona il numero di posizioni
+                        <select title="Numero posizioni" name="n_positions" id="n_positions" >
+                            <option selected disabled></option>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option>7</option>
+                            <option>8</option>
+                            <option>9</option>
+                            <option>10</option>
+                        </select>
+                    </div>
                 </div>
 
             </div>
 
             <form method="POST" action="/salva">
-                <div id="nPos">
-                    Seleziona il numero di posizioni
-                    <select title="Numero posizioni" name="n_positions" id="n_positions" >
-                        <option selected disabled>{{nPos}}</option>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option>6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                        <option>10</option>
-                    </select>
-                </div>
+                <input type="hidden" name="pos_form" id="pos_form"/>
                 <button class="submit" type="submit">Salva dominio</button>
             </form>
         </div>

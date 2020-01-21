@@ -292,21 +292,22 @@ DOMAIN cembre0 {
     /*DA QUI INIZIA IL FILE NUOVO*/
 
 //Enumeration Parameter
-	PAR_TYPE EnumerationParameterType location = { at0, at1, at2, at3, base };
+	PAR_TYPE EnumerationParameterType location = { Pos0, Pos1, Pos2, Pos3, Pos4, Pos5, base };
 
 // position components
 	COMPONENT Pos0{FLEXIBLE position(primitive)}: PositionType;
 	COMPONENT Pos1{FLEXIBLE position(primitive)}: PositionType;
 	COMPONENT Pos2{FLEXIBLE position(primitive)}: PositionType;
 	COMPONENT Pos3{FLEXIBLE position(primitive)}: PositionType;
+	COMPONENT Pos4{FLEXIBLE position(primitive)}: PositionType;
+	COMPONENT Pos5{FLEXIBLE position(primitive)}: PositionType;
 
-	COMP_TYPE SingletonStateVariable AssemblyProcessType(Idle(), T1(), T2(), T3())
+	COMP_TYPE SingletonStateVariable AssemblyProcessType(Idle(), T1(), T2())
 	{
 		VALUE Idle() [1, +INF]
 		MEETS {
 			T1();
 			T2();
-			T3();
 		}
 
 		VALUE T1() [1, +INF]
@@ -315,11 +316,6 @@ DOMAIN cembre0 {
 		}
 
 		VALUE T2() [1, +INF]
-		MEETS {
-			Idle();
-		}
-
-		VALUE T3() [1, +INF]
 		MEETS {
 			Idle();
 		}
@@ -334,13 +330,45 @@ DOMAIN cembre0 {
 			task1 <!> AssemblyProcess.tasks.T2();
 			CONTAINS [0, +INF] [0, +INF] task1;
 
-			task2 <!> AssemblyProcess.tasks.T3();
-			CONTAINS [0, +INF] [0, +INF] task2;
-
 			task0 BEFORE [0, +INF] task1;
-			task1 BEFORE [0, +INF] task2;
 		}
 	}
 
+	SYNCHRONIZE AssemblyProcess.tasks {
+		VALUE T1() {
+			h0 <!> HumanProcess.process._Task_manipolazione(?hloc0);
+			?hloc0 = Pos1;
+				hp0 <!> Pos1.position.REQUIREMENT(?amountH0);
+				?amountH0 = 1;
+				hp0 EQUALS h0;
+			r0 <!> RoboticProcess.process.Task_manipolazione(?rloc0);
+			?rloc0 = Pos1;
+				rp0 <!> Pos1.position.REQUIREMENT(?amountR0);
+				?amountR0 = 1;
+				rp0 EQUALS r0;
+
+			m CollaborationType.modality.Supportive();
+			h0 EQUALS r0;
+			m CONTAINS [0, +INF] [0, +INF] h0;
+			m CONTAINS [0, +INF] [0, +INF] r0;
+			CONTAINS [0, +INF] [0, +INF] h0;
+			CONTAINS [0, +INF] [0, +INF] r0;
+		}
+		VALUE T2() {
+			t0 <!> RoboticProcess.process.Task_spostamento(?from0?to<built-in function id>);
+			?from0 = Pos1;
+			?to0 = Pos3;
+				s0 <!> Pos1.position.REQUIREMENT(?amountS0);
+				?amountS0 = 2;
+				s0 EQUALS t0;
+				d0 <!> Pos1.position.REQUIREMENT(?amountD0);
+				?amountD0 = 2;
+				d0 EQUALS t0;
+
+			m CollaborationType.modality.Independent();
+			m CONTAINS [0, +INF] [0, +INF] t0;
+			CONTAINS [0, +INF] [0, +INF] t0;
+		}
+	}
 
 }
