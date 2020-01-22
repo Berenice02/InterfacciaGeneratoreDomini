@@ -315,6 +315,7 @@ $(document).ready(function() {
             document.getElementById("pos_form").value = sessionStorage.getItem("nPos");
 
             //add options to select-position
+            $(".pos").empty();
             for (var i=0; i<sessionStorage.getItem("nPos"); i++){
                 $(".pos").append("<option>" + (i+1).toString() + "</option>");
             }
@@ -326,6 +327,7 @@ $(document).ready(function() {
             document.getElementById("pos_form").value = sessionStorage.getItem("nPos");
 
             //add options to select-position
+            $(".pos").empty();
             for (var i=0; i<sessionStorage.getItem("nPos"); i++){
                 $(".pos").append("<option>" + (i+1).toString() + "</option>");
             }
@@ -337,6 +339,7 @@ $(document).ready(function() {
         document.getElementById("pos_form").value = sessionStorage.getItem("nPos");
 
         //add options to select-position
+        $(".pos").empty();
         for (var i=0; i<sessionStorage.getItem("nPos"); i++){
             $(".pos").append("<option>" + (i+1).toString() + "</option>");
         }
