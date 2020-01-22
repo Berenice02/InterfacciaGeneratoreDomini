@@ -18,7 +18,7 @@ class Function:
         self.assigned_to = assigned_to
 
 #lista di task
-lista = [Task("T1", "Supportive", [Function("0", "Manipolazione", "1", "0", "Human/Robot"), Function("1", "Manipolazione", "2", "0", "Human/Robot")]), Task("T2", "Independent", [Function("0", "Spostamento", "1", "3", "Robot")])]
+lista = [Task("T1", "Supportive", [Function("0", "Manipolazione", "1", "0", "Human/Robot"), Function("1", "Manipolazione", "2", "0", "Human/Robot")]), Task("T2", "Independent", [Function("0", "Spostamento", "1", "3", "Indifferente")])]
 numeroDominio = 0
 
 #pagina iniziale
@@ -26,11 +26,17 @@ numeroDominio = 0
 def hello():
     return render_template("index.html", lista=lista)
 
+#reset della lista se si decide di creare un nuovo dominio
+@app.route('/true', methods=['GET'])
+def new():
+    global lista
+    lista.clear()
+    return render_template("index.html", lista=lista)
+
 #aggiunta di un task al processo
 @app.route('/', methods=['POST'])
 def aggiungi():
     data = request.json
-    print (data)
     functions = []
 
     #aggiunta di tutte le function a una lista
@@ -52,11 +58,11 @@ def aggiungi():
 
 
 #funzione che aggiunge un task se la modalità è Independent o Synchronous
-def aggiungiIndValue(function):
+def aggiungiIndValue(function, operator):
     tmp = "\t\t\tt" + str(function.id) + " <!> " 
-    if( function.assigned_to == "Human"):
+    if( operator == "Human"):
         tmp += "HumanProcess.process._"
-    if( function.assigned_to == "Robot"):
+    if( operator == "Robot"):
         tmp += "RoboticProcess.process."
     if( function.type == "Manipolazione"):
         tmp += "Task_manipolazione(?loc" + str(function.id) + ");\n"
@@ -95,6 +101,18 @@ def aggiungiSuppValue(function):
 
     return tmp
 
+#funzione che crea la combinazione lineare di operatori
+#in base a quanti task con operatore "Indifferente" ci sono
+def combLin(n):
+	if n==1:
+		return [['Human'], ['Robot']]
+	else:
+		tmp1 = combLin(n-1)
+		tmp2 = combLin(n-1)
+		for i in range(2**(n-1)):
+			tmp1[i].append('Human')
+			tmp2[i].append('Robot')
+		return tmp1 + tmp2
 
 #salvataggio del dominio in un file
 @app.route('/salva', methods=['POST'])
@@ -120,11 +138,11 @@ def salva():
             append = lista[i].name + "())\n\t{\n"
         SV_AssemblyProcess += append
     SV_AssemblyProcess += "\t\tVALUE Idle() [1, +INF]\n\t\tMEETS {\n"
-    for element in lista:
-        SV_AssemblyProcess += "\t\t\t" + element.name + "();\n"
+    for task in lista:
+        SV_AssemblyProcess += "\t\t\t" + task.name + "();\n"
     SV_AssemblyProcess += "\t\t}\n\n"
-    for element in lista:
-        SV_AssemblyProcess += "\t\tVALUE " + element.name + "() [1, +INF]\n"
+    for task in lista:
+        SV_AssemblyProcess += "\t\tVALUE " + task.name + "() [1, +INF]\n"
         SV_AssemblyProcess += "\t\tMEETS {\n\t\t\tIdle();\n\t\t}\n\n"
     SV_AssemblyProcess += "\t}\n\n"
 
@@ -137,38 +155,40 @@ def salva():
         SYN_Cembre += "\t\t\ttask" + str(i) + " BEFORE [0, +INF] task" + str(i+1) + ";\n"
     SYN_Cembre += "\t\t}\n\t}\n\n"
 
-
     #SYNCHRONIZE AssemblyProcess.tasks
     SYN_Task = "\tSYNCHRONIZE AssemblyProcess.tasks {\n"
     for task in lista:
-        SYN_Task += "\t\tVALUE " + task.name + "() {\n"
-        for function in element.functions:
+        indifferenti = []
+        SYN_Task += "\n\t\tVALUE " + task.name + "() {\n"
+        for function in task.functions:
             if(task.collaboration_type == "Independent" or task.collaboration_type == "Synchronous"):
                 if(function.assigned_to != "Indifferente"):
-                    SYN_Task += aggiungiIndValue(function)
+                    SYN_Task += aggiungiIndValue(function, function.assigned_to)
                 else:
-                    print ("ahh")
+                    indifferenti.append(function)
+                    SYN_Task += aggiungiIndValue(function, "Human")
             else:
                 SYN_Task += aggiungiSuppValue(function)
-                print("primo")
 
         #aggiungo la modalità collaborativa e i vincoli
         SYN_Task += "\n\t\t\tm CollaborationType.modality." + task.collaboration_type + "();\n"
-        for i in range(len(element.functions)):
+        for i in range(len(task.functions)):
             if(task.collaboration_type == "Independent"):
                 SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
                 SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
-            if(task.collaboration_type == "Synchronous" and i<len(element.functions)-1):
-                SYN_Task += "\t\t\tt" + str(i) + " BEFORE [0, +INF] t" + str(i+1) + ";\n"
+            if(task.collaboration_type == "Synchronous"):
+                if(i<len(task.functions)-1):
+                    #vincolo BEFORE con Synchronous
+                    SYN_Task += "\t\t\tt" + str(i) + " BEFORE [0, +INF] t" + str(i+1) + ";\n"
                 SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
                 SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
-                #manca l'ultimo
             if(task.collaboration_type == "Simultaneous"):
                 SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] h" + str(i) + ";\n"
                 SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] r" + str(i) + ";\n"
                 SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] h" + str(i) + ";\n"
                 SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] r" + str(i) + ";\n"
             if(task.collaboration_type == "Supportive"):
+                #Vincolo EQUALS con Supportive
                 SYN_Task += "\t\t\th" + str(i) + " EQUALS r" + str(i) + ";\n"
                 SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] h" + str(i) + ";\n"
                 SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] r" + str(i) + ";\n"
@@ -176,7 +196,58 @@ def salva():
                 SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] r" + str(i) + ";\n"
             
         SYN_Task += "\t\t}\n"
-                        
+
+        #Se ci sono delle funzioni che possono essere svolte da entrambi gli operatori
+        if (len(indifferenti) != 0):
+            print(len(indifferenti))
+            print(indifferenti)
+            operatori = combLin(len(indifferenti))
+            print(operatori)
+            for i in range(1, len(operatori)):
+                #RISCRIVO TUTTA LA FUNZIONE 
+                SYN_Task += "\n\t\tVALUE " + task.name + "() {\n"
+                for function in task.functions:
+                    if(task.collaboration_type == "Independent" or task.collaboration_type == "Synchronous"):
+                        if(function.assigned_to != "Indifferente"):
+                            SYN_Task += aggiungiIndValue(function, function.assigned_to)
+                        else:
+                            n = indifferenti.index(function)
+                            print(n)
+                            SYN_Task += aggiungiIndValue(function, operatori[i][n])
+                            print(operatori[i][n])
+                    else:
+                        SYN_Task += aggiungiSuppValue(function)
+
+                #aggiungo la modalità collaborativa e i vincoli
+                SYN_Task += "\n\t\t\tm CollaborationType.modality." + task.collaboration_type + "();\n"
+                for i in range(len(task.functions)):
+                    if(task.collaboration_type == "Independent"):
+                        SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
+                        SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
+                    if(task.collaboration_type == "Synchronous"):
+                        if(i<len(task.functions)-1):
+                            #vincolo BEFORE con Synchronous
+                            SYN_Task += "\t\t\tt" + str(i) + " BEFORE [0, +INF] t" + str(i+1) + ";\n"
+                        SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
+                        SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
+                    if(task.collaboration_type == "Simultaneous"):
+                        SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] h" + str(i) + ";\n"
+                        SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] r" + str(i) + ";\n"
+                        SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] h" + str(i) + ";\n"
+                        SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] r" + str(i) + ";\n"
+                    if(task.collaboration_type == "Supportive"):
+                        #Vincolo EQUALS con Supportive
+                        SYN_Task += "\t\t\th" + str(i) + " EQUALS r" + str(i) + ";\n"
+                        SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] h" + str(i) + ";\n"
+                        SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] r" + str(i) + ";\n"
+                        SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] h" + str(i) + ";\n"
+                        SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] r" + str(i) + ";\n"
+                    
+                SYN_Task += "\t\t}\n"
+
+
+
+    #chiudi parentesi della regola di sincronizzazione dell'assembly process                    
     SYN_Task += "\t}\n"
 
 

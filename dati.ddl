@@ -292,15 +292,12 @@ DOMAIN cembre0 {
     /*DA QUI INIZIA IL FILE NUOVO*/
 
 //Enumeration Parameter
-	PAR_TYPE EnumerationParameterType location = { Pos0, Pos1, Pos2, Pos3, Pos4, Pos5, base };
+	PAR_TYPE EnumerationParameterType location = { Pos0, Pos1, Pos2, base };
 
 // position components
 	COMPONENT Pos0{FLEXIBLE position(primitive)}: PositionType;
 	COMPONENT Pos1{FLEXIBLE position(primitive)}: PositionType;
 	COMPONENT Pos2{FLEXIBLE position(primitive)}: PositionType;
-	COMPONENT Pos3{FLEXIBLE position(primitive)}: PositionType;
-	COMPONENT Pos4{FLEXIBLE position(primitive)}: PositionType;
-	COMPONENT Pos5{FLEXIBLE position(primitive)}: PositionType;
 
 	COMP_TYPE SingletonStateVariable AssemblyProcessType(Idle(), T1(), T2())
 	{
@@ -335,6 +332,7 @@ DOMAIN cembre0 {
 	}
 
 	SYNCHRONIZE AssemblyProcess.tasks {
+
 		VALUE T1() {
 			h0 <!> HumanProcess.process._Task_manipolazione(?hloc0);
 			?hloc0 = Pos1;
@@ -346,6 +344,16 @@ DOMAIN cembre0 {
 				rp0 <!> Pos1.position.REQUIREMENT(?amountR0);
 				?amountR0 = 1;
 				rp0 EQUALS r0;
+			h1 <!> HumanProcess.process._Task_manipolazione(?hloc1);
+			?hloc1 = Pos2;
+				hp1 <!> Pos2.position.REQUIREMENT(?amountH1);
+				?amountH1 = 1;
+				hp1 EQUALS h1;
+			r1 <!> RoboticProcess.process.Task_manipolazione(?rloc1);
+			?rloc1 = Pos2;
+				rp1 <!> Pos2.position.REQUIREMENT(?amountR1);
+				?amountR1 = 1;
+				rp1 EQUALS r1;
 
 			m CollaborationType.modality.Supportive();
 			h0 EQUALS r0;
@@ -353,15 +361,37 @@ DOMAIN cembre0 {
 			m CONTAINS [0, +INF] [0, +INF] r0;
 			CONTAINS [0, +INF] [0, +INF] h0;
 			CONTAINS [0, +INF] [0, +INF] r0;
+			h1 EQUALS r1;
+			m CONTAINS [0, +INF] [0, +INF] h1;
+			m CONTAINS [0, +INF] [0, +INF] r1;
+			CONTAINS [0, +INF] [0, +INF] h1;
+			CONTAINS [0, +INF] [0, +INF] r1;
 		}
+
 		VALUE T2() {
-			t0 <!> RoboticProcess.process.Task_spostamento(?from0?to<built-in function id>);
+			t0 <!> HumanProcess.process._Task_spostamento(?from0, ?to0);
 			?from0 = Pos1;
 			?to0 = Pos3;
 				s0 <!> Pos1.position.REQUIREMENT(?amountS0);
 				?amountS0 = 2;
 				s0 EQUALS t0;
-				d0 <!> Pos1.position.REQUIREMENT(?amountD0);
+				d0 <!> Pos3.position.REQUIREMENT(?amountD0);
+				?amountD0 = 2;
+				d0 EQUALS t0;
+
+			m CollaborationType.modality.Independent();
+			m CONTAINS [0, +INF] [0, +INF] t0;
+			CONTAINS [0, +INF] [0, +INF] t0;
+		}
+
+		VALUE T2() {
+			t0 <!> RoboticProcess.process.Task_spostamento(?from0, ?to0);
+			?from0 = Pos1;
+			?to0 = Pos3;
+				s0 <!> Pos1.position.REQUIREMENT(?amountS0);
+				?amountS0 = 2;
+				s0 EQUALS t0;
+				d0 <!> Pos3.position.REQUIREMENT(?amountD0);
 				?amountD0 = 2;
 				d0 EQUALS t0;
 

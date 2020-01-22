@@ -7,7 +7,7 @@
 // function to execute on page load
 $(document).ready(function() {
     
-    // show only process names and descriptions (task names) initially
+    // show only process names and collaboration modality (task names) initially
     $(".task-description").hide();
     $(".task").hide();
 
@@ -246,27 +246,33 @@ $(document).ready(function() {
             var pos1 = 0
           }
 
-          var tmp = new SubTask(count, type, pos, pos1, operator);
-          lista.push(tmp);
-
-          //display the new subtask
-          $("#results").append("<p>Sub-task di tipo: " + type + pos + pos1 + " Assegnato a: " + operator + "</p>");
-
-          var col = (document.getElementById("new-operator").value);
-          if (col === "Independent" || col === "Synchronous") {
-            //reset the values of subtask form
-            $("#f-new-type").prop('selectedIndex', 0);
-            $("#new-operator").prop('selectedIndex', 0);
-            $(".handle").show();
-            $(".move").hide();
-            $(".indep").hide();
+          if(type === "" || pos === "" || pos1 === "" || operator === "") {
+            window.alert("Inserisci tutti i dati del sub-task");
           }
-          
-          count += 1;
 
-          //block the number of positions and the collaboration modality
-          $("#n_positions").prop("disabled", true); 
-          $("#new-collaboration").prop("disabled", true);
+          else {
+            var tmp = new SubTask(count, type, pos, pos1, operator);
+            lista.push(tmp);
+
+            //display the new subtask
+            $("#results").append("<p>Sub-task di tipo: " + type + pos + pos1 + " Assegnato a: " + operator + "</p>");
+
+            var col = (document.getElementById("new-operator").value);
+            if (col === "Independent" || col === "Synchronous") {
+                //reset the values of subtask form
+                $("#f-new-type").prop('selectedIndex', 0);
+                $("#new-operator").prop('selectedIndex', 0);
+                $(".handle").show();
+                $(".move").hide();
+                $(".indep").hide();
+            }
+            
+            count += 1;
+
+            //block the number of positions and the collaboration modality
+            $("#n_positions").prop("disabled", true); 
+            $("#new-collaboration").prop("disabled", true);
+          }
     });
 
 
@@ -277,39 +283,68 @@ $(document).ready(function() {
         //take the elements
         var nomeTask = document.getElementById("new-name").value;
         var collab = document.getElementById("new-collaboration").value;
-        lista.push({"taskName": nomeTask, "collab": collab});
-        //create the json data
-        var js_data = JSON.stringify(lista);
-          $.ajax({                        
-              url: '/',
-              type : 'post',
-              contentType: 'application/json; charset=utf-8',
-              dataType : 'json',
-              data : js_data
-          }).always(function(){
-            location.reload(true);
-         });
+        if (nomeTask === "" || collab === "" || lista.length<=0) {
+            window.alert("Inserisci tutti i dati del task");
+        }
+
+        else {
+            sessionStorage.removeItem("new");
+            lista.push({"taskName": nomeTask, "collab": collab});
+            //create the json data
+            var js_data = JSON.stringify(lista);
+            $.ajax({                        
+                url: '/',
+                type : 'post',
+                contentType: 'application/json; charset=utf-8',
+                dataType : 'json',
+                data : js_data
+            }).always(function(){
+                location.replace("/");
+            });
+        }
     });
 
     $("#n_positions").show(function() {
-        if (sessionStorage.getItem("nPos") !== null) {
-            this.value = sessionStorage.getItem("nPos");
-            $("#n_positions").prop("disabled", true);
-            
-            document.getElementById("pos_form").value = sessionStorage.getItem("nPos");
-        }
-        else {
+        if ( sessionStorage.getItem("nPos") === null ) {
             $("#n_positions").prop("disabled", false);
+        }
+
+        else if( sessionStorage.getItem("new") === "false" ) {
+            $("#n_positions").prop("disabled", false);
+            this.value = sessionStorage.getItem("nPos");
+            document.getElementById("pos_form").value = sessionStorage.getItem("nPos");
+
+            //add options to select-position
+            for (var i=0; i<sessionStorage.getItem("nPos"); i++){
+                $(".pos").append("<option>" + (i+1).toString() + "</option>");
+            }
+        }
+
+        else {
+            $("#n_positions").prop("disabled", true);
+            this.value = sessionStorage.getItem("nPos");
+            document.getElementById("pos_form").value = sessionStorage.getItem("nPos");
+
+            //add options to select-position
+            for (var i=0; i<sessionStorage.getItem("nPos"); i++){
+                $(".pos").append("<option>" + (i+1).toString() + "</option>");
+            }
         }
     });
     //change #positions
     $("#n_positions").change(function() {
         sessionStorage.setItem("nPos", this.value);
+        document.getElementById("pos_form").value = sessionStorage.getItem("nPos");
 
         //add options to select-position
         for (var i=0; i<sessionStorage.getItem("nPos"); i++){
             $(".pos").append("<option>" + (i+1).toString() + "</option>");
         }
     });
+
+
+    /********************************************
+     *  Modify a process
+     ********************************************/
 
 });

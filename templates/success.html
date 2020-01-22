@@ -27,9 +27,23 @@
                 </div>
             </div>
 
-            <form method="GET" action="/">
-                <button class="submit" type="submit">Crea un nuovo dominio</button>
+            <form method="GET" action="/true">
+                <button class="submit" id="new">Crea un nuovo dominio</button>
             </form>
+            <form method="GET" action="/">
+                <button class="submit" id="mod">Modifica il dominio precedente</button>
+            </form>
+
+
+            <script>
+                $("#new").click(function() {
+                    sessionStorage.clear();
+                    sessionStorage.setItem('new', true);
+                });
+                $("#mod").click(function() {
+                    sessionStorage.setItem('new', false);
+                });
+            </script>
         </div>
     </body>
 
