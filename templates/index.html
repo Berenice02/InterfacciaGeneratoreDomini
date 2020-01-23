@@ -43,21 +43,15 @@ and open the template in the editor.
                                 {% for element in lista %}
                                 <div class="process-task" title="{{element.name}}">
                                     <div class="task-name">
-                                        <label class="task-title">{{element.name}} - </label>
-                                        <div class="collaboration-type">
-                                            <select class="select-collaboration">
-                                                <option selected disabled value="{{element.collaboration_type}}">{{element.collaboration_type}}</option>
-                                                <option>Independent</option>
-                                                <option>Synchronous</option>
-                                                <option>Simultaneous</option>
-                                                <option>Supportive</option>
-                                            </select>
-                                        </div>
+                                        <label class="task-title el-name">{{element.name}}</label>
+                                        <label class="task-title"> - </label>
+                                        <label class="collaboration-type">{{element.collaboration_type}}</label>
                                     </div>
                                     
                                     <div class="task-description" title="{{element.name}}">
                                         {% for function in element.functions %}
                                         <div class="function">
+                                            <label class="id" hidden>{{function.id}}</label>
                                             <div class="type">
                                                 <select class="select-type">
                                                     <option selected disabled>{{function.type}}</option>
@@ -68,11 +62,11 @@ and open the template in the editor.
                                             <div class="position">
                                                 <div class="function-pos handle-pos">In posizione</div>
                                                 <div class="function-pos first-pos">Dalla posizione</div>
-                                                <select class="pos select-pos">
+                                                <select class="pos select-pos p">
                                                     <option selected disabled>{{function.pos}}</option>
                                                 </select>
                                                 <div class="function-pos second-pos">alla</div>
-                                                <select class="pos select-pos second-pos">
+                                                <select class="pos select-pos second-pos p1">
                                                     <option selected disabled>{{function.pos1}}</option>
                                                 </select>
                                             </div>
@@ -120,9 +114,13 @@ and open the template in the editor.
                                             </select>
                                             <label class="handle">In posizione</label>
                                             <label class="move">Dalla posizione</label>
-                                            <select class="pos" id="pos"></select>
+                                            <select class="pos" id="pos">
+                                                <option selected disabled></option>
+                                            </select>
                                             <label class="move">alla</label>
-                                            <select class="move pos" id="pos1"></select>
+                                            <select class="move pos" id="pos1">
+                                                <option selected disabled></option>
+                                            </select>
                                         </div>
                                         <div class="sub-task-form">
                                             <label>Da chi deve essere svolto?</label>

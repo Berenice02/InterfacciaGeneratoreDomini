@@ -39,21 +39,39 @@ def aggiungi():
     data = request.json
     functions = []
 
-    #aggiunta di tutte le function a una lista
-    for i in range(len(data)-1):
-        f_id = data[i]["id"]
-        f_type = data[i]["type"]
-        f_pos = data[i]["pos"]
-        f_pos1 = data[i]["pos1"]
-        f_operator = data[i]["operator"]
-        func = Function(f_id, f_type, f_pos, f_pos1, f_operator)
-        functions.append(func)
+    if(data[-1] == "new"):
+        #aggiunta di tutte le function a una lista
+        for i in range(len(data)-2):
+            f_id = data[i]["id"]
+            f_type = data[i]["type"]
+            f_pos = data[i]["pos"]
+            f_pos1 = data[i]["pos1"]
+            f_operator = data[i]["operator"]
+            func = Function(f_id, f_type, f_pos, f_pos1, f_operator)
+            functions.append(func)
 
-    name = data[-1]["taskName"].strip().capitalize()
-    collaboration = data[-1]["collab"]
-    task = Task(name, collaboration, functions)
-    #aggiunta del task alla lista
-    lista.append(task)
+        name = data[-2]["taskName"].strip().capitalize()
+        collaboration = data[-2]["collab"]
+        task = Task(name, collaboration, functions)
+        #aggiunta del task alla lista
+        lista.append(task)
+    if(data[-1] == "remove"):
+        print(1)
+    if(data[-1] == "mod"):
+        func = data[1][0]
+        for element in lista:
+            if element.name == data[0]:
+
+                f_id = int(func["id"])
+                f_type = func["type"]
+                f_pos = func["pos"]
+                f_pos1 = func["pos1"]
+                f_operator = func["operator"]
+                function = Function(f_id, f_type, f_pos, f_pos1, f_operator)
+
+                print(element.functions[f_id].pos)
+                element.functions[f_id] = function
+                print(element.functions[f_id].pos)
     return render_template("index.html", lista=lista)
 
 

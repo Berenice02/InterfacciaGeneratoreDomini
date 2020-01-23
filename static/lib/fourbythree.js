@@ -6,6 +6,18 @@
 
 // function to execute on page load
 $(document).ready(function() {
+
+    var lista = [];
+
+    var SubTask = class SubTask {
+        constructor(id, type, pos, pos1, operator) {
+            this.id = id;
+            this.type = type;
+            this.pos = pos;
+            this.pos1 = pos1;
+            this.operator = operator;
+        }
+    };
     
     // show only process names and collaboration modality (task names) initially
     $(".task-description").hide();
@@ -28,95 +40,159 @@ $(document).ready(function() {
     /**********************************************
     *   Display task (with modify's constraints)
     ***********************************************/
+    $(".collaboration-type").show(function() {
+        var sub = $(this).parent().siblings(".task-description").children(".function");
+        if($(this).html()=== "Simultaneous" || $(this).html() === "Supportive") {
+            sub.children(".type").children(".select-type").prop("disabled", true);
+            sub.children(".assigned-to").children(".select-operator").prop("disabled", true);
+        }
+
+        else {
+            sub.children(".type").children(".select-type").prop("disabled", false);
+            sub.children(".assigned-to").children(".select-operator").prop("disabled", false);
+        }
+    });
+
    $(".select-type").show(function() {
         var position = $(this).parent().siblings(".position");
-        var modality = $(this).parent().siblings(".collaboration-type").children(".select-collaboration");
-        var operator = $(this).parent().siblings(".assigned-to").children(".select-operator");
         if (this.value === "Manipolazione") {
             position.children(".handle-pos").show();
             position.children(".first-pos").hide();
             position.children(".second-pos").hide();
-
-            modality.prop("disabled", false);
-        }
+       }
         if (this.value === "Spostamento") {
             position.children(".handle-pos").hide();
             position.children(".first-pos").show();
             position.children(".second-pos").show();
-
-            modality.prop("disabled", true);
         }
     });
     
-   $(".select-type").change(function() {
+   
+    /********************************************
+     *  Modify a process
+     ********************************************/
+    //Change Manipolazione/Spostamento
+    $(".select-type").change(function() {
         var position = $(this).parent().siblings(".position");
-        var modality = $(this).parent().siblings(".collaboration-type").children(".select-collaboration");
-        var operator = $(this).parent().siblings(".assigned-to").children(".select-operator");
         if (this.value === "Manipolazione") {
             position.children(".handle-pos").show();
             position.children(".first-pos").hide();
             position.children(".second-pos").hide();
-
-            // restore original collaboration-type
-            modality.prop("selectedIndex", 0);
-            modality.prop("disabled", false);
-
-            if (modality[0].value === "Independent") {
-                //restore original operator
-                operator.prop("selectedIndex", 0);
-                if(operator.value === "Human/Robot"){
-                    // set robot as operator
-                    operator.prop("selectedIndex", 1);
-                }
-                operator.prop("disabled", false);
-            }
-            else {
-                // set Human/Robot as default operator
-                operator.prop("selectedIndex", 4);
-                operator.prop("disabled", true);
-            }
         }
+
         if (this.value === "Spostamento") {
             position.children(".handle-pos").hide();
             position.children(".first-pos").show();
             position.children(".second-pos").show();
-            
-            // set Independent as default collaboration-type
-            modality.prop("selectedIndex", 4);
-            modality.prop("disabled", true);
+        }
 
-            // set Robot as operator
-            operator.prop("selectedIndex", 1);
-            operator.prop("disabled", false);
+        var id = $(this).parent().siblings(".id").html();
+        var pos = position.children(".p")[0].value;
+        if(this.value === "Manipolazione") {
+            var pos1 = 0
         }
+        if(this.value === "Spostamento") {
+            var pos1 = position.children(".p1")[0].value;
+        }
+        var operator = $(this).parent().siblings(".assigned-to").children(".select-operator")[0].value;
+
+        var nomeTask = $(this).parent().parent().parent().siblings(".task-name").children(".el-name").html();
+        var subtmp = new SubTask(id, this.value, pos, pos1, operator);
+
+        var tmp =[nomeTask, [subtmp], "mod"];
+        //create the json data
+        var js_data = JSON.stringify(tmp);
+        $.ajax({                        
+            url: '/',
+            type : 'post',
+            contentType: 'application/json; charset=utf-8',
+            dataType : 'json',
+            data : js_data
+        });
     });
 
-    $(".select-collaboration").show(function(){
-        var operator = $(this).parent().siblings(".assigned-to").children(".select-operator");
-        if (this.value === "Independent") {
-            operator.prop("disabled", false);
+    //Change first position
+    $(".p").change(function() {
+        var id = $(this).parent().siblings(".id").html();
+        var type = $(this).parent().siblings(".type").children(".select-type")[0].value;
+        if(type === "Manipolazione") {
+            var pos1 = 0
         }
-        else {
-            operator.prop("disabled", true);
+        if(type === "Spostamento") {
+            var pos1 = $(this).siblings(".p1")[0].value;
         }
+        var operator = $(this).parent().siblings(".assigned-to").children(".select-operator")[0].value;
+
+        var nomeTask = $(this).parent().parent().parent().siblings(".task-name").children(".el-name").html();
+        var subtmp = new SubTask(id, type, this.value, pos1, operator);
+        var tmp =[nomeTask, [subtmp], "mod"];
+        //create the json data
+        var js_data = JSON.stringify(tmp);
+        $.ajax({                        
+            url: '/',
+            type : 'post',
+            contentType: 'application/json; charset=utf-8',
+            dataType : 'json',
+            data : js_data
+        });
     });
-    $(".select-collaboration").change(function(){
-        var operator = $(this).parent().siblings(".assigned-to").children(".select-operator");
-        if (this.value === "Independent") {
-            //restore original operator
-            operator.prop("selectedIndex", 0);
-            if(operator[0].value === "Human/Robot"){
-                // set robot as operator
-                operator.prop("selectedIndex", 1);
-            }
-            operator.prop("disabled", false);
+
+    //Change second position
+    $(".p1").change(function() {
+        var id = $(this).parent().siblings(".id").html();
+        var type = $(this).parent().siblings(".type").children(".select-type")[0].value;
+        if(type === "Manipolazione") {
+            var pos = 0
         }
-        else {
-            // set Human/Robot as default operator
-            operator.prop("selectedIndex", 4);
-            operator.prop("disabled", true);
+        if(type === "Spostamento") {
+            var pos = $(this).siblings(".p")[0].value;
         }
+        var operator = $(this).parent().siblings(".assigned-to").children(".select-operator")[0].value;
+
+        var nomeTask = $(this).parent().parent().parent().siblings(".task-name").children(".el-name").html();
+        var subtmp = new SubTask(id, type, pos, this.value, operator);
+        var tmp =[nomeTask, [subtmp], "mod"];
+        //create the json data
+        var js_data = JSON.stringify(tmp);
+        $.ajax({                        
+            url: '/',
+            type : 'post',
+            contentType: 'application/json; charset=utf-8',
+            dataType : 'json',
+            data : js_data
+        });
     });
+
+    //Change operator
+    $(".select-operator").change(function() {
+        var position = $(this).parent().siblings(".position");
+
+        var id = $(this).parent().siblings(".id").html();
+        var type = $(this).parent().siblings(".type").children(".select-type")[0].value;
+        var pos = position.children(".p")[0].value;
+        if(type === "Manipolazione") {
+            var pos1 = 0
+        }
+        if(type === "Spostamento") {
+            var pos1 = position.children(".p1")[0].value;
+        }
+        
+        var nomeTask = $(this).parent().parent().parent().siblings(".task-name").children(".el-name").html();
+        var subtmp = new SubTask(id, type, pos, pos1, this.value);
+
+        var tmp =[nomeTask, [subtmp], "mod"];
+        //create the json data
+        var js_data = JSON.stringify(tmp);
+        $.ajax({                        
+            url: '/',
+            type : 'post',
+            contentType: 'application/json; charset=utf-8',
+            dataType : 'json',
+            data : js_data
+        });
+    });
+
+
 
     /**************************************
     *   Change background-color
@@ -217,23 +293,11 @@ $(document).ready(function() {
             $(".handle").show();
         }
     });
-    
-    var lista = [];
-
-    var SubTask = class SubTask {
-        constructor(id, type, pos, pos1, operator) {
-            this.id = id;
-            this.type = type;
-            this.pos = pos;
-            this.pos1 = pos1;
-            this.operator = operator;
-        }
-    };
 
     /**************************************
     *   Create a subtask
     ***************************************/
-    count = 0;
+    funcID = 0;
     $("#func").click(function(){
           //take the elements
           var type = (document.getElementById("f-new-type").value);
@@ -251,7 +315,7 @@ $(document).ready(function() {
           }
 
           else {
-            var tmp = new SubTask(count, type, pos, pos1, operator);
+            var tmp = new SubTask(funcID, type, pos, pos1, operator);
             lista.push(tmp);
 
             //display the new subtask
@@ -267,7 +331,7 @@ $(document).ready(function() {
                 $(".indep").hide();
             }
             
-            count += 1;
+            funcID += 1;
 
             //block the number of positions and the collaboration modality
             $("#n_positions").prop("disabled", true); 
@@ -290,6 +354,7 @@ $(document).ready(function() {
         else {
             sessionStorage.removeItem("new");
             lista.push({"taskName": nomeTask, "collab": collab});
+            lista.push("new")
             //create the json data
             var js_data = JSON.stringify(lista);
             $.ajax({                        
@@ -315,7 +380,7 @@ $(document).ready(function() {
             document.getElementById("pos_form").value = sessionStorage.getItem("nPos");
 
             //add options to select-position
-            $(".pos").empty();
+            $(".pos").clear();
             for (var i=0; i<sessionStorage.getItem("nPos"); i++){
                 $(".pos").append("<option>" + (i+1).toString() + "</option>");
             }
@@ -327,7 +392,7 @@ $(document).ready(function() {
             document.getElementById("pos_form").value = sessionStorage.getItem("nPos");
 
             //add options to select-position
-            $(".pos").empty();
+            $(".pos").clear();
             for (var i=0; i<sessionStorage.getItem("nPos"); i++){
                 $(".pos").append("<option>" + (i+1).toString() + "</option>");
             }
@@ -339,15 +404,10 @@ $(document).ready(function() {
         document.getElementById("pos_form").value = sessionStorage.getItem("nPos");
 
         //add options to select-position
-        $(".pos").empty();
+        $(".pos").clear();
         for (var i=0; i<sessionStorage.getItem("nPos"); i++){
             $(".pos").append("<option>" + (i+1).toString() + "</option>");
         }
     });
-
-
-    /********************************************
-     *  Modify a process
-     ********************************************/
 
 });
