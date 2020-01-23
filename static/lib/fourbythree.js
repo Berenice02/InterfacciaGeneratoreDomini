@@ -99,7 +99,7 @@ $(document).ready(function() {
         var nomeTask = $(this).parent().parent().parent().siblings(".task-name").children(".el-name").html();
         var subtmp = new SubTask(id, this.value, pos, pos1, operator);
 
-        var tmp =[nomeTask, [subtmp], "mod"];
+        var tmp =[nomeTask, subtmp, "mod"];
         //create the json data
         var js_data = JSON.stringify(tmp);
         $.ajax({                        
@@ -125,7 +125,8 @@ $(document).ready(function() {
 
         var nomeTask = $(this).parent().parent().parent().siblings(".task-name").children(".el-name").html();
         var subtmp = new SubTask(id, type, this.value, pos1, operator);
-        var tmp =[nomeTask, [subtmp], "mod"];
+
+        var tmp =[nomeTask, subtmp, "mod"];
         //create the json data
         var js_data = JSON.stringify(tmp);
         $.ajax({                        
@@ -151,7 +152,7 @@ $(document).ready(function() {
 
         var nomeTask = $(this).parent().parent().parent().siblings(".task-name").children(".el-name").html();
         var subtmp = new SubTask(id, type, pos, this.value, operator);
-        var tmp =[nomeTask, [subtmp], "mod"];
+        var tmp =[nomeTask, subtmp, "mod"];
         //create the json data
         var js_data = JSON.stringify(tmp);
         $.ajax({                        
@@ -180,7 +181,7 @@ $(document).ready(function() {
         var nomeTask = $(this).parent().parent().parent().siblings(".task-name").children(".el-name").html();
         var subtmp = new SubTask(id, type, pos, pos1, this.value);
 
-        var tmp =[nomeTask, [subtmp], "mod"];
+        var tmp =[nomeTask, subtmp, "mod"];
         //create the json data
         var js_data = JSON.stringify(tmp);
         $.ajax({                        
@@ -192,6 +193,30 @@ $(document).ready(function() {
         });
     });
 
+    /**************************************
+    *   Remove Subtask
+    ***************************************/
+    $(".removeF").click(function() {
+        var id = $(this).siblings(".id").html();
+        console.log(id);
+        
+        var nomeTask = $(this).parent().parent().siblings(".task-name").children(".el-name").html();
+        var subtmp = new SubTask(id, "", "", "", "");
+        console.log(nomeTask);
+
+        var tmp =[nomeTask, subtmp, "removeF"];
+        //create the json data
+        var js_data = JSON.stringify(tmp);
+        $.ajax({                        
+            url: '/',
+            type : 'post',
+            contentType: 'application/json; charset=utf-8',
+            dataType : 'json',
+            data : js_data
+        }).always(function() {
+            location.replace("/");
+        });
+    });
 
 
     /**************************************

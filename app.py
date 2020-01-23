@@ -55,10 +55,19 @@ def aggiungi():
         task = Task(name, collaboration, functions)
         #aggiunta del task alla lista
         lista.append(task)
-    if(data[-1] == "remove"):
-        print(1)
+
+    if(data[-1] == "removeF"):
+        for element in lista:
+            if element.name == data[0]:
+                print(data[0])
+                for function in element.functions:
+                    print(function.id)
+                    if function.id == data[1]["id"]:
+                        print("fatto")
+                        element.functions.remove(function)
+
     if(data[-1] == "mod"):
-        func = data[1][0]
+        func = data[1]
         for element in lista:
             if element.name == data[0]:
 
@@ -69,9 +78,8 @@ def aggiungi():
                 f_operator = func["operator"]
                 function = Function(f_id, f_type, f_pos, f_pos1, f_operator)
 
-                print(element.functions[f_id].pos)
                 element.functions[f_id] = function
-                print(element.functions[f_id].pos)
+                
     return render_template("index.html", lista=lista)
 
 
