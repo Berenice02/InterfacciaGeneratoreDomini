@@ -277,7 +277,8 @@ def salva():
     #salvataggio
     global numeroDominio
     with open("static/base.ddl", "r") as s:
-        with open("dati.ddl", "w+") as f:
+        nome = "Cembre" + str(numeroDominio) + ".ddl"
+        with open(nome, "w+") as f:
             #scrivo nome dominio e incremento il contatore
             f.write("DOMAIN cembre" + str(numeroDominio) + " {\n")
             numeroDominio += 1
@@ -293,13 +294,8 @@ def salva():
             f.write("\n}")
             f.close()
         s.close()
-    
-    tmp = "Cembre" + str(numeroDominio-1) + SV_AssemblyProcess
-    return render_template("success.html", file=tmp)
 
-    #reinizializzazione della lista per il nuovo dominio
-    #session.clear()
-    #lista.clear()
+    return render_template("success.html", file=nome)
 
 if __name__ == '__main__':
     app.run()

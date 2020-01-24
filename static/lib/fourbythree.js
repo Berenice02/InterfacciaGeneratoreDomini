@@ -443,7 +443,7 @@ $(document).ready(function() {
     });
 
     function addPositions () {
-        $(".pos").not('option:selected').remove();
+        $(".pos").find("option:gt(0)").remove();
         for (var i=0; i<sessionStorage.getItem("nPos"); i++){
             $(".pos").append("<option>" + (i+1).toString() + "</option>");
         }
