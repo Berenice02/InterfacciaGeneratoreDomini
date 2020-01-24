@@ -22,6 +22,10 @@ body
     min-height: 100px;
 }
 
+.logo {
+    height: 150px;
+}
+
 
 #footer 
 {    

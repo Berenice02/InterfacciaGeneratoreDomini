@@ -18,7 +18,7 @@ class Function:
         self.assigned_to = assigned_to
 
 #lista di task
-lista = [Task("T1", "Supportive", [Function("0", "Manipolazione", "1", "0", "Human/Robot"), Function("1", "Manipolazione", "2", "0", "Human/Robot")]), Task("T2", "Independent", [Function("0", "Spostamento", "1", "3", "Indifferente")])]
+lista = []
 numeroDominio = 0
 
 #pagina iniziale
