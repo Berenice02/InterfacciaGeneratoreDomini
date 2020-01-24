@@ -198,13 +198,10 @@ $(document).ready(function() {
     ***************************************/
     $(".removeF").click(function() {
         var id = $(this).siblings(".id").html();
-        console.log(id);
         
         var nomeTask = $(this).parent().parent().siblings(".task-name").children(".el-name").html();
-        var subtmp = new SubTask(id, "", "", "", "");
-        console.log(nomeTask);
-
-        var tmp =[nomeTask, subtmp, "removeF"];
+        
+        var tmp =[nomeTask, id, "removeF"];
         //create the json data
         var js_data = JSON.stringify(tmp);
         $.ajax({                        
@@ -218,6 +215,26 @@ $(document).ready(function() {
         });
     });
 
+    /**************************************
+    *   Remove Task
+    ***************************************/
+   $(".removeT").click(function() {
+
+    var nomeTask = $(this).siblings(".el-name").html();
+    
+    var tmp =[nomeTask, "removeT"];
+    //create the json data
+    var js_data = JSON.stringify(tmp);
+    $.ajax({                        
+        url: '/',
+        type : 'post',
+        contentType: 'application/json; charset=utf-8',
+        dataType : 'json',
+        data : js_data
+    }).always(function() {
+        location.replace("/");
+    });
+});
 
     /**************************************
     *   Change background-color
@@ -364,7 +381,6 @@ $(document).ready(function() {
           }
     });
 
-
     /**************************************
     *   Submit a task
     ***************************************/
@@ -405,10 +421,7 @@ $(document).ready(function() {
             document.getElementById("pos_form").value = sessionStorage.getItem("nPos");
 
             //add options to select-position
-            $(".pos").clear();
-            for (var i=0; i<sessionStorage.getItem("nPos"); i++){
-                $(".pos").append("<option>" + (i+1).toString() + "</option>");
-            }
+            addPositions();
         }
 
         else {
@@ -417,10 +430,7 @@ $(document).ready(function() {
             document.getElementById("pos_form").value = sessionStorage.getItem("nPos");
 
             //add options to select-position
-            $(".pos").clear();
-            for (var i=0; i<sessionStorage.getItem("nPos"); i++){
-                $(".pos").append("<option>" + (i+1).toString() + "</option>");
-            }
+            addPositions();
         }
     });
     //change #positions
@@ -429,10 +439,14 @@ $(document).ready(function() {
         document.getElementById("pos_form").value = sessionStorage.getItem("nPos");
 
         //add options to select-position
-        $(".pos").clear();
+        addPositions();
+    });
+
+    function addPositions () {
+        $(".pos").not('option:selected').remove();
         for (var i=0; i<sessionStorage.getItem("nPos"); i++){
             $(".pos").append("<option>" + (i+1).toString() + "</option>");
         }
-    });
+    }
 
 });

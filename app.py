@@ -59,12 +59,14 @@ def aggiungi():
     if(data[-1] == "removeF"):
         for element in lista:
             if element.name == data[0]:
-                print(data[0])
                 for function in element.functions:
-                    print(function.id)
-                    if function.id == data[1]["id"]:
-                        print("fatto")
+                    if function.id == data[1]:
                         element.functions.remove(function)
+
+    if(data[-1] == "removeT"):
+        for element in lista:
+            if element.name == data[0]:
+                lista.remove(element)
 
     if(data[-1] == "mod"):
         func = data[1]
@@ -79,7 +81,7 @@ def aggiungi():
                 function = Function(f_id, f_type, f_pos, f_pos1, f_operator)
 
                 element.functions[f_id] = function
-                
+
     return render_template("index.html", lista=lista)
 
 
@@ -225,10 +227,7 @@ def salva():
 
         #Se ci sono delle funzioni che possono essere svolte da entrambi gli operatori
         if (len(indifferenti) != 0):
-            print(len(indifferenti))
-            print(indifferenti)
             operatori = combLin(len(indifferenti))
-            print(operatori)
             for i in range(1, len(operatori)):
                 #RISCRIVO TUTTA LA FUNZIONE 
                 SYN_Task += "\n\t\tVALUE " + task.name + "() {\n"
@@ -238,9 +237,7 @@ def salva():
                             SYN_Task += aggiungiIndValue(function, function.assigned_to)
                         else:
                             n = indifferenti.index(function)
-                            print(n)
                             SYN_Task += aggiungiIndValue(function, operatori[i][n])
-                            print(operatori[i][n])
                     else:
                         SYN_Task += aggiungiSuppValue(function)
 
