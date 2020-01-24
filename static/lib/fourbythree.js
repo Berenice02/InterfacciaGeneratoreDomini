@@ -361,17 +361,16 @@ $(document).ready(function() {
             lista.push(tmp);
 
             //display the new subtask
-            $("#results").append("<p>Sub-task di tipo: " + type + pos + pos1 + " Assegnato a: " + operator + "</p>");
-
-            var col = (document.getElementById("new-operator").value);
-            if (col === "Independent" || col === "Synchronous") {
-                //reset the values of subtask form
-                $("#f-new-type").prop('selectedIndex', 0);
-                $("#new-operator").prop('selectedIndex', 0);
-                $(".handle").show();
-                $(".move").hide();
-                $(".indep").hide();
+            var res = ("<p>Sub-task di tipo: " + type);
+            if (type === "Manipolazione"){
+                res += (" In posizione: " + pos);
             }
+            if (type === "Spostamento") {
+                res += (" Dalla posizione " + pos);
+                res += (" alla " + pos1);
+            }
+            res += (" Assegnato a: " + operator + "</p>");
+            $("#results").append(res);
             
             funcID += 1;
 
