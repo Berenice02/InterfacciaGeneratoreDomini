@@ -234,11 +234,11 @@ def salva():
 
     #SYNCHRONIZE Cembre.case_study
     SYN_Cembre = "\tSYNCHRONIZE Cembre.case_study {\n\t\tVALUE Assembly() {\n"
-    for i in range(len(lista)):
-        SYN_Cembre += "\t\t\ttask" + str(i) + " <!> AssemblyProcess.tasks." + lista[i].name + "();\n"
-        SYN_Cembre += "\t\t\tCONTAINS [0, +INF] [0, +INF] task" + str(i) + ";\n\n"
-    for i in range(len(lista)-1):
-        SYN_Cembre += "\t\t\ttask" + str(i) + " BEFORE [0, +INF] task" + str(i+1) + ";\n"
+    for element in lista:
+        SYN_Cembre += "\t\t\ttask_" + element.name + " <!> AssemblyProcess.tasks." + element.name + "();\n"
+        SYN_Cembre += "\t\t\tCONTAINS [0, +INF] [0, +INF] task_" + element.name + ";\n\n"
+    for element in vincoli:
+        SYN_Cembre += "\t\t\ttask_" + element.t1 + " BEFORE [0, +INF] task_" + element.t2 + ";\n"
     SYN_Cembre += "\t\t}\n\t}\n\n"
 
     #SYNCHRONIZE AssemblyProcess.tasks
