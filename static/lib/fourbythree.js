@@ -198,9 +198,11 @@ $(document).ready(function() {
     ***************************************/
     $(".removeF").click(function() {
         var id = $(this).siblings(".id").html();
+        console.log(id)
         
         var nomeTask = $(this).parent().parent().siblings(".task-name").children(".el-name").html();
-        
+        console.log(nomeTask)
+
         var tmp =[nomeTask, id, "removeF"];
         //create the json data
         var js_data = JSON.stringify(tmp);
@@ -292,6 +294,29 @@ $(document).ready(function() {
     *   Display/Hide input fields of each task
     ********************************************/
     $("#new-collaboration").change(function(){
+        $(".sub-task-form").show();
+        if(this.value == "Independent" || this.value == "Synchronous"){
+            $("#f-new-type").prop("disabled", false);
+            $("#new-operator").prop("selectedIndex", 0);
+            $("#new-operator").prop("disabled", false);            
+        }
+        
+        // Simultaneous or Supportive modality
+        else {
+            // set Manipulation as default type
+            $("#f-new-type").prop("selectedIndex", 1);
+            $("#f-new-type").prop("disabled", true);
+
+            $(".move").hide();
+            $(".handle").show();
+
+            // set Human/Robot as default operator
+            $("#new-operator").prop("selectedIndex", 4);
+            $("#new-operator").prop("disabled", true);
+        }
+    });
+
+    $("#new-collaboration").show(function(){
         $(".sub-task-form").show();
         if(this.value == "Independent" || this.value == "Synchronous"){
             $("#f-new-type").prop("disabled", false);
@@ -417,7 +442,6 @@ $(document).ready(function() {
         else if( sessionStorage.getItem("new") === "false" ) {
             $("#n_positions").prop("disabled", false);
             this.value = sessionStorage.getItem("nPos");
-            document.getElementById("pos_form").value = sessionStorage.getItem("nPos");
 
             //add options to select-position
             addPositions();
@@ -426,7 +450,6 @@ $(document).ready(function() {
         else {
             $("#n_positions").prop("disabled", true);
             this.value = sessionStorage.getItem("nPos");
-            document.getElementById("pos_form").value = sessionStorage.getItem("nPos");
 
             //add options to select-position
             addPositions();
@@ -435,7 +458,6 @@ $(document).ready(function() {
     //change #positions
     $("#n_positions").change(function() {
         sessionStorage.setItem("nPos", this.value);
-        document.getElementById("pos_form").value = sessionStorage.getItem("nPos");
 
         //add options to select-position
         addPositions();
@@ -448,4 +470,5 @@ $(document).ready(function() {
         }
     }
 
+    sessionStorage.setItem("c_id", 0);
 });

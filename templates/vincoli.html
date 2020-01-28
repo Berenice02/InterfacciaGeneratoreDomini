@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css"/>
+        
+        <title>Interface</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!-- include jQuery library -->
+        <script src="{{ url_for('static', filename='lib/jquery-3.4.1.js') }}"></script>
+
+        <!-- custom library -->
+        <script src="{{ url_for('static', filename='lib/vincoli.js') }}"></script>
+        
+    </head>
+
+    <body>
+        <div id="header">
+            <img class="logo" src="{{ url_for('static', filename='img/Sharework_logo_color.png') }}" />
+        </div>
+        
+        <div id="content">
+            <div id="process-list" class="section">
+                <div class="section-title">Imposta i vincoli di precedenza</div>
+
+                <div class="section-content">
+                    <div id="results" class="task-description process-description process section-item">
+                        {% for element in vincoli %}
+                        <div>
+                            <select class="task">
+                                <option selected disabled>{{element.t1}}</option>
+                            </select>
+                            <label>BEFORE [0, +INF]</label>
+                            <select class="task">
+                                <option selected disabled>{{element.t2}}</option>
+                            </select>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div>
+                        <select class="task" id="t1">
+                            <option selected disabled></option>
+                        </select>
+                        <label>BEFORE [0, +INF]</label>
+                        <select class="task" id="t2">
+                            <option selected disabled></option>
+                        </select>
+                        <button id="sub">Fatto</button>
+                    </div>
+                </div>
+            </div>
+
+            <form method="POST" action="/salva">
+                <input type="hidden" name="pos_form" id="pos_form"/>
+                <button class="submit" type="submit">Salva dominio</button>
+            </form>
+
+        </div>
+    </body>
+    <div id="footer">
+    </div>
+
+    <script>
+        $(".task").find("option:gt(0)").remove();
+        '{% for element in lista %}'
+            $(".task").append("<option>" + '{{element.name}}' + "</option>");
+        '{% endfor %}'
+
+        document.getElementById("pos_form").value = sessionStorage.getItem("nPos");
+    </script>
+
+</html>

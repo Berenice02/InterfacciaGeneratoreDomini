@@ -8,7 +8,7 @@ class Task:
         self.name = name
         self.collaboration_type = collaboration_type
         self.functions = functions
-#e delle funzioni di ogni task
+#delle funzioni di ogni task
 class Function:
     def __init__(self, id, type, pos, pos1, assigned_to):
         self.id = id
@@ -16,9 +16,18 @@ class Function:
         self.pos = pos
         self.pos1 = pos1
         self.assigned_to = assigned_to
+#classe dei vincoli sulla timeline principale
+class Vincolo:
+    def __init__(self, id, t1, t2):
+        self.id = id
+        self.t1 = t1
+        self.t2 = t2
 
 #lista di task
-lista = []
+f = Function(1, "a", 2, 2, "a")
+lista = [Task("A", "b", [f]), Task("B", "b", [f])]
+#lista di vincoli di precedenza sui task
+vincoli = []
 numeroDominio = 0
 
 #pagina iniziale
@@ -26,14 +35,18 @@ numeroDominio = 0
 def hello():
     return render_template("index.html", lista=lista)
 
-#reset della lista se si decide di creare un nuovo dominio
+#######################################################################
+#       Reset della lista se si decide di creare un nuovo dominio
+#######################################################################
 @app.route('/true', methods=['GET'])
 def new():
     global lista
     lista.clear()
     return render_template("index.html", lista=lista)
 
-#aggiunta di un task al processo
+########################################################################
+#       Aggiunta/Rimozione/Modifica di un task al processo
+########################################################################
 @app.route('/', methods=['POST'])
 def aggiungi():
     data = request.json
@@ -61,6 +74,7 @@ def aggiungi():
             if element.name == data[0]:
                 for function in element.functions:
                     if function.id == data[1]:
+                        print(data[0] + " " + data[1])
                         element.functions.remove(function)
 
     if(data[-1] == "removeT"):
@@ -84,7 +98,49 @@ def aggiungi():
 
     return render_template("index.html", lista=lista)
 
+###############################################################################
+#   Reinderizzazione verso la pagina di selezione dei vincoli
+###############################################################################
+@app.route('/vincoli')
+def prosegui():
+    return render_template("vincoli.html", lista=lista, vincoli=vincoli)
 
+##############################################################################
+#       Salvataggio dei vincoli
+##############################################################################
+@app.route('/vincoli', methods=['POST'])
+def aggiungiVincoli():
+    data = request.json
+
+    if(data[-1] == "new"):
+        #aggiunta del vincolo alla lista
+        v_id = data[0]["id"]
+        t1 = data[0]["t1"]
+        t2 = data[0]["t2"]
+        v = Vincolo(v_id, t1, t2)
+        vincoli.append(v)
+
+    if(data[1] == "remove"):
+        #rimuovi il vincolo dalla lista
+        for element in vincoli:
+            if element.id == data[0]:
+                vincoli.remove(element)
+
+    if(data[1] == "mod"):
+        v_id = data[0]
+        for element in vincoli:
+            if element.id == v_id:
+                t1 = data[1]
+                t2 = data[2]
+                v = Vincolo(data[0], t1, t2)
+                
+                element = v
+
+    return render_template("vincoli.html", lista=lista, vincoli=vincoli)
+
+
+###############################################################################
+###############################################################################
 #funzione che aggiunge un task se la modalità è Independent o Synchronous
 def aggiungiIndValue(function, operator):
     tmp = "\t\t\tt" + str(function.id) + " <!> " 
@@ -142,7 +198,9 @@ def combLin(n):
 			tmp2[i].append('Robot')
 		return tmp1 + tmp2
 
-#salvataggio del dominio in un file
+#########################################################################################
+#                   Salvataggio del dominio in un file
+#########################################################################################
 @app.route('/salva', methods=['POST'])
 def salva():
     pos = int(request.form.get('pos_form'))
@@ -150,11 +208,11 @@ def salva():
     #Posizioni
     Positions = "//Enumeration Parameter\n\tPAR_TYPE EnumerationParameterType location = { "
     for i in range(pos):
-        Positions += "Pos" + str(i) + ", "
+        Positions += "Pos" + str(i+1) + ", "
     Positions += "base };\n\n"
     Positions += "// position components\n"
     for i in range(pos):
-        Positions += "\tCOMPONENT Pos" + str(i) + "{FLEXIBLE position(primitive)}: PositionType;\n"
+        Positions += "\tCOMPONENT Pos" + str(i+1) + "{FLEXIBLE position(primitive)}: PositionType;\n"
     Positions += "\n"
 
     #COMP_TYPE AssemblyProcessType

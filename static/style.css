@@ -277,3 +277,13 @@ body
     color: black;
     text-align: center;
 }
+
+.task {
+    width: 30%; 
+    margin: 0.2%;
+    padding: 0%;
+    margin-right: 2%;
+    margin-left: 2%;
+    font-size: medium;
+    white-space: nowrap;
+}
