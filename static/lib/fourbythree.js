@@ -6,6 +6,18 @@
 
 // function to execute on page load
 $(document).ready(function() {
+    const Manipolazione = "Manipolazione";
+    const Spostamento = "Spostamento";
+
+    const Human = "Human";
+    const Robot = "Robot";
+    const H_R = "Human/Robot";
+    const Indiff = "Indifferente";
+
+    const Ind = "Independent";
+    const Syn = "Synchronous";
+    const Sim = "Simultaneous";
+    const Supp = "Supportive";
 
     var lista = [];
 
@@ -42,12 +54,12 @@ $(document).ready(function() {
     ***********************************************/
     $(".collaboration-type").show(function() {
         var sub = $(this).parent().siblings(".task-description").children(".function");
-        if($(this).html()=== "Simultaneous" || $(this).html() === "Supportive") {
+        if($(this).html()=== Sim || $(this).html() === Supp) {
             sub.children(".type").children(".select-type").prop("disabled", true);
             sub.children(".assigned-to").children(".select-operator").prop("disabled", true);
         }
 
-        else {
+        if($(this).html()=== Ind || $(this).html() === Syn) {
             sub.children(".type").children(".select-type").prop("disabled", false);
             sub.children(".assigned-to").children(".select-operator").prop("disabled", false);
         }
@@ -55,12 +67,12 @@ $(document).ready(function() {
 
    $(".select-type").show(function() {
         var position = $(this).parent().siblings(".position");
-        if (this.value === "Manipolazione") {
+        if (this.value === Manipolazione) {
             position.children(".handle-pos").show();
             position.children(".first-pos").hide();
             position.children(".second-pos").hide();
        }
-        if (this.value === "Spostamento") {
+        if (this.value === Spostamento) {
             position.children(".handle-pos").hide();
             position.children(".first-pos").show();
             position.children(".second-pos").show();
@@ -74,13 +86,13 @@ $(document).ready(function() {
     //Change Manipolazione/Spostamento
     $(".select-type").change(function() {
         var position = $(this).parent().siblings(".position");
-        if (this.value === "Manipolazione") {
+        if (this.value === Manipolazione) {
             position.children(".handle-pos").show();
             position.children(".first-pos").hide();
             position.children(".second-pos").hide();
         }
 
-        if (this.value === "Spostamento") {
+        if (this.value === Spostamento) {
             position.children(".handle-pos").hide();
             position.children(".first-pos").show();
             position.children(".second-pos").show();
@@ -88,10 +100,10 @@ $(document).ready(function() {
 
         var id = $(this).parent().siblings(".id").html();
         var pos = position.children(".p")[0].value;
-        if(this.value === "Manipolazione") {
+        if(this.value === Manipolazione) {
             var pos1 = 0
         }
-        if(this.value === "Spostamento") {
+        if(this.value === Spostamento) {
             var pos1 = position.children(".p1")[0].value;
         }
         var operator = $(this).parent().siblings(".assigned-to").children(".select-operator")[0].value;
@@ -115,10 +127,10 @@ $(document).ready(function() {
     $(".p").change(function() {
         var id = $(this).parent().siblings(".id").html();
         var type = $(this).parent().siblings(".type").children(".select-type")[0].value;
-        if(type === "Manipolazione") {
+        if(type === Manipolazione) {
             var pos1 = 0
         }
-        if(type === "Spostamento") {
+        if(type === Spostamento) {
             var pos1 = $(this).siblings(".p1")[0].value;
         }
         var operator = $(this).parent().siblings(".assigned-to").children(".select-operator")[0].value;
@@ -142,10 +154,10 @@ $(document).ready(function() {
     $(".p1").change(function() {
         var id = $(this).parent().siblings(".id").html();
         var type = $(this).parent().siblings(".type").children(".select-type")[0].value;
-        if(type === "Manipolazione") {
+        if(type === Manipolazione) {
             var pos = 0
         }
-        if(type === "Spostamento") {
+        if(type === Spostamento) {
             var pos = $(this).siblings(".p")[0].value;
         }
         var operator = $(this).parent().siblings(".assigned-to").children(".select-operator")[0].value;
@@ -171,10 +183,10 @@ $(document).ready(function() {
         var id = $(this).parent().siblings(".id").html();
         var type = $(this).parent().siblings(".type").children(".select-type")[0].value;
         var pos = position.children(".p")[0].value;
-        if(type === "Manipolazione") {
+        if(type === Manipolazione) {
             var pos1 = 0
         }
-        if(type === "Spostamento") {
+        if(type === Spostamento) {
             var pos1 = position.children(".p1")[0].value;
         }
         
@@ -243,34 +255,34 @@ $(document).ready(function() {
     ***************************************/
     $(".select-operator").show(function() {
         // check selected operator
-        if (this.value === "Human") {
+        if (this.value === Human) {
             $(this).parents(".function").css("background-color", "lightblue");
         }
-        if (this.value === "Robot") {
+        if (this.value === Robot) {
             $(this).parents(".function").css("background-color", "lightgreen");
         }
-        if (this.value === "Human/Robot") {
+        if (this.value === H_R) {
             $(this).parents(".function").css("background-color","lemonchiffon");
         }
-        if (this.value === "Indifferente") {
+        if (this.value === Indiff) {
          $(this).parents(".function").css("background-color","palevioletred");
          }
      });
      $(".select-operator").change(function() {
         // check selected option
-        if (this.value === "Human") {
+        if (this.value === Human) {
             // set color
             $(this).parents(".function").css("background-color", "lightblue");
         }
-        if (this.value === "Robot") {
+        if (this.value === Robot) {
             // set color
             $(this).parents(".function").css("background-color", "lightgreen");
         }
-        if (this.value === "Human/Robot") {
+        if (this.value === H_R) {
             // set color
             $(this).parents(".function").css("background-color","lemonchiffon");
         }
-        if (this.value === "Indifferente") {
+        if (this.value === Indiff) {
          $(this).parents(".function").css("background-color","palevioletred");
         }
      });
@@ -285,7 +297,14 @@ $(document).ready(function() {
         }
         else {
             $(this).siblings(".task").fadeToggle("fast");
-            $(".sub-task-form").hide();
+
+            if($("#new-collaboration")[0].value == ""){
+                $(".sub-task-form").hide();
+            }
+            else {
+                $(".sub-task-form").show();
+            }
+            
         }
     });
 
@@ -295,14 +314,14 @@ $(document).ready(function() {
     ********************************************/
     $("#new-collaboration").change(function(){
         $(".sub-task-form").show();
-        if(this.value == "Independent" || this.value == "Synchronous"){
+        if(this.value == Ind || this.value == Syn){
             $("#f-new-type").prop("disabled", false);
             $("#new-operator").prop("selectedIndex", 0);
             $("#new-operator").prop("disabled", false);            
         }
         
         // Simultaneous or Supportive modality
-        else {
+        if(this.value == Sim || this.value == Supp){
             // set Manipulation as default type
             $("#f-new-type").prop("selectedIndex", 1);
             $("#f-new-type").prop("disabled", true);
@@ -316,46 +335,24 @@ $(document).ready(function() {
         }
     });
 
-    $("#new-collaboration").show(function(){
-        $(".sub-task-form").show();
-        if(this.value == "Independent" || this.value == "Synchronous"){
-            $("#f-new-type").prop("disabled", false);
-            $("#new-operator").prop("selectedIndex", 0);
-            $("#new-operator").prop("disabled", false);            
-        }
-        
-        // Simultaneous or Supportive modality
-        else {
-            // set Manipulation as default type
-            $("#f-new-type").prop("selectedIndex", 1);
-            $("#f-new-type").prop("disabled", true);
-
-            $(".move").hide();
-            $(".handle").show();
-
-            // set Human/Robot as default operator
-            $("#new-operator").prop("selectedIndex", 4);
-            $("#new-operator").prop("disabled", true);
-        }
-    });
 
     $(".move").hide();
     $("#f-new-type").show(function(){
-        if (this.value === "Spostamento") {
+        if (this.value === Spostamento) {
             $(".handle").hide();
             $(".move").show();
         }
-        if(this.value === "Manipolazione") {
+        if(this.value === Manipolazione) {
             $(".move").hide();
             $(".handle").show();
         }
     });
     $("#f-new-type").change(function(){
-        if (this.value === "Spostamento") {
+        if (this.value === Spostamento) {
             $(".handle").hide();
             $(".move").show();
         }
-        if(this.value === "Manipolazione") {
+        if(this.value === Manipolazione) {
             $(".move").hide();
             $(".handle").show();
         }
@@ -370,10 +367,10 @@ $(document).ready(function() {
           var type = (document.getElementById("f-new-type").value);
           var pos = (document.getElementById("pos").value);
           var operator = (document.getElementById("new-operator").value);
-          if (type === "Spostamento") {
+          if (type === Spostamento) {
             var pos1 = (document.getElementById("pos1").value);
           }
-          else {
+          if (type === Manipolazione) {
             var pos1 = 0
           }
 
@@ -387,10 +384,10 @@ $(document).ready(function() {
 
             //display the new subtask
             var res = ("<p>Sub-task di tipo: " + type);
-            if (type === "Manipolazione"){
+            if (type === Manipolazione){
                 res += (" In posizione: " + pos);
             }
-            if (type === "Spostamento") {
+            if (type === Spostamento) {
                 res += (" Dalla posizione " + pos);
                 res += (" alla " + pos1);
             }
