@@ -28,13 +28,15 @@
                     <div id="results" class="task-description process-description process section-item">
                         {% for element in vincoli %}
                         <div>
-                            <select class="task">
+                            <label class="id" hidden>{{element.id}}</label>
+                            <select class="task t1">
                                 <option selected disabled>{{element.t1}}</option>
                             </select>
                             <label>BEFORE [0, +INF]</label>
-                            <select class="task">
+                            <select class="task t2">
                                 <option selected disabled>{{element.t2}}</option>
                             </select>
+                            <button class="remove">Elimina</button>
                         </div>
                         {% endfor %}
                     </div>

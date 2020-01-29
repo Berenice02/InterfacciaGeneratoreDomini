@@ -73,7 +73,7 @@ def aggiungi():
         for element in lista:
             if element.name == data[0]:
                 for function in element.functions:
-                    if function.id == data[1]:
+                    if function.id == int(data[1]):
                         print(data[0] + " " + data[1])
                         element.functions.remove(function)
 
@@ -84,6 +84,7 @@ def aggiungi():
 
     if(data[-1] == "mod"):
         func = data[1]
+
         for element in lista:
             if element.name == data[0]:
 
@@ -92,9 +93,9 @@ def aggiungi():
                 f_pos = func["pos"]
                 f_pos1 = func["pos1"]
                 f_operator = func["operator"]
-                function = Function(f_id, f_type, f_pos, f_pos1, f_operator)
+                f = Function(f_id, f_type, f_pos, f_pos1, f_operator)
 
-                element.functions[f_id] = function
+                element.functions[:] = [f if x.id==f.id else x for x in element.functions]
 
     return render_template("index.html", lista=lista)
 
@@ -120,21 +121,22 @@ def aggiungiVincoli():
         v = Vincolo(v_id, t1, t2)
         vincoli.append(v)
 
-    if(data[1] == "remove"):
+    if(data[-1] == "remove"):
         #rimuovi il vincolo dalla lista
         for element in vincoli:
-            if element.id == data[0]:
+            if element.id == int(data[0]):
                 vincoli.remove(element)
 
-    if(data[1] == "mod"):
-        v_id = data[0]
-        for element in vincoli:
-            if element.id == v_id:
-                t1 = data[1]
-                t2 = data[2]
-                v = Vincolo(data[0], t1, t2)
-                
-                element = v
+    if(data[-1] == "mod"):
+        #modifica il vincolo
+        con = data[0]
+
+        id = int(con["id"])
+        t1 = con["t1"]
+        t2 = con["t2"]
+        v = Vincolo(id, t1, t2)
+
+        vincoli[:] = [v if x.id==v.id else x for x in vincoli]
 
     return render_template("vincoli.html", lista=lista, vincoli=vincoli)
 
