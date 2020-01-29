@@ -55,6 +55,7 @@ def aggiungi():
     if(data[-1] == "new"):
         #aggiunta di tutte le function a una lista
         for i in range(len(data)-2):
+            #questo è un int
             f_id = data[i]["id"]
             f_type = data[i]["type"]
             f_pos = data[i]["pos"]
@@ -74,7 +75,6 @@ def aggiungi():
             if element.name == data[0]:
                 for function in element.functions:
                     if function.id == int(data[1]):
-                        print(data[0] + " " + data[1])
                         element.functions.remove(function)
 
     if(data[-1] == "removeT"):
@@ -84,7 +84,6 @@ def aggiungi():
 
     if(data[-1] == "mod"):
         func = data[1]
-
         for element in lista:
             if element.name == data[0]:
 
@@ -115,9 +114,11 @@ def aggiungiVincoli():
 
     if(data[-1] == "new"):
         #aggiunta del vincolo alla lista
-        v_id = data[0]["id"]
-        t1 = data[0]["t1"]
-        t2 = data[0]["t2"]
+        con = data[0]
+        #questo è un int
+        v_id = con["id"]
+        t1 = con["t1"]
+        t2 = con["t2"]
         v = Vincolo(v_id, t1, t2)
         vincoli.append(v)
 

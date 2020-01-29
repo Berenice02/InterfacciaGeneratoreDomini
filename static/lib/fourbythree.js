@@ -210,10 +210,8 @@ $(document).ready(function() {
     ***************************************/
     $(".removeF").click(function() {
         var id = $(this).siblings(".id").html();
-        console.log(id)
         
         var nomeTask = $(this).parent().parent().siblings(".task-name").children(".el-name").html();
-        console.log(nomeTask)
 
         var tmp =[nomeTask, id, "removeF"];
         //create the json data
