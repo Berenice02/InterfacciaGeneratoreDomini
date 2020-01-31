@@ -23,6 +23,12 @@ class Vincolo:
         self.t1 = t1
         self.t2 = t2
 
+#costanti
+IND = "Independent"
+SYN = "Synchronous"
+SIM = "Simultaneous"
+SUPP = "Supportive"
+
 #lista di task
 f = Function(1, "a", 2, 2, "a")
 lista = [Task("A", "b", [f]), Task("B", "b", [f])]
@@ -41,7 +47,9 @@ def hello():
 @app.route('/true', methods=['GET'])
 def new():
     global lista
+    global vincoli
     lista.clear()
+    vincoli.clear()
     return render_template("index.html", lista=lista)
 
 ########################################################################
@@ -80,6 +88,11 @@ def aggiungi():
     if(data[-1] == "removeT"):
         for element in lista:
             if element.name == data[0]:
+                for con in vincoli:
+                    if con.t1 == element.name:
+                        vincoli.remove(con)
+                    if con.t2 == element.name:
+                        vincoli.remove(con)
                 lista.remove(element)
 
     if(data[-1] == "mod"):
@@ -103,7 +116,10 @@ def aggiungi():
 ###############################################################################
 @app.route('/vincoli')
 def prosegui():
-    return render_template("vincoli.html", lista=lista, vincoli=vincoli)
+    if len(lista)>1:
+        return render_template("vincoli.html", lista=lista, vincoli=vincoli)
+    else:
+        return render_template("vincoli.html", lista=[], vincoli=[], v="true")
 
 ##############################################################################
 #       Salvataggio dei vincoli
@@ -250,33 +266,33 @@ def salva():
         indifferenti = []
         SYN_Task += "\n\t\tVALUE " + task.name + "() {\n"
         for function in task.functions:
-            if(task.collaboration_type == "Independent" or task.collaboration_type == "Synchronous"):
+            if(task.collaboration_type == IND or task.collaboration_type == SYN):
                 if(function.assigned_to != "Indifferente"):
                     SYN_Task += aggiungiIndValue(function, function.assigned_to)
                 else:
                     indifferenti.append(function)
                     SYN_Task += aggiungiIndValue(function, "Human")
-            else:
+            if(task.collaboration_type == SIM or task.collaboration_type == SUPP):
                 SYN_Task += aggiungiSuppValue(function)
 
         #aggiungo la modalità collaborativa e i vincoli
         SYN_Task += "\n\t\t\tm CollaborationType.modality." + task.collaboration_type + "();\n"
         for i in range(len(task.functions)):
-            if(task.collaboration_type == "Independent"):
+            if(task.collaboration_type == IND):
                 SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
                 SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
-            if(task.collaboration_type == "Synchronous"):
+            if(task.collaboration_type == SYN):
                 if(i<len(task.functions)-1):
                     #vincolo BEFORE con Synchronous
                     SYN_Task += "\t\t\tt" + str(i) + " BEFORE [0, +INF] t" + str(i+1) + ";\n"
                 SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
                 SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
-            if(task.collaboration_type == "Simultaneous"):
+            if(task.collaboration_type == SIM):
                 SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] h" + str(i) + ";\n"
                 SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] r" + str(i) + ";\n"
                 SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] h" + str(i) + ";\n"
                 SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] r" + str(i) + ";\n"
-            if(task.collaboration_type == "Supportive"):
+            if(task.collaboration_type == SUPP):
                 #Vincolo EQUALS con Supportive
                 SYN_Task += "\t\t\th" + str(i) + " EQUALS r" + str(i) + ";\n"
                 SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] h" + str(i) + ";\n"
@@ -293,7 +309,7 @@ def salva():
                 #RISCRIVO TUTTA LA FUNZIONE 
                 SYN_Task += "\n\t\tVALUE " + task.name + "() {\n"
                 for function in task.functions:
-                    if(task.collaboration_type == "Independent" or task.collaboration_type == "Synchronous"):
+                    if(task.collaboration_type == IND or task.collaboration_type == SYN):
                         if(function.assigned_to != "Indifferente"):
                             SYN_Task += aggiungiIndValue(function, function.assigned_to)
                         else:
@@ -305,21 +321,21 @@ def salva():
                 #aggiungo la modalità collaborativa e i vincoli
                 SYN_Task += "\n\t\t\tm CollaborationType.modality." + task.collaboration_type + "();\n"
                 for i in range(len(task.functions)):
-                    if(task.collaboration_type == "Independent"):
+                    if(task.collaboration_type == IND):
                         SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
                         SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
-                    if(task.collaboration_type == "Synchronous"):
+                    if(task.collaboration_type == SYN):
                         if(i<len(task.functions)-1):
                             #vincolo BEFORE con Synchronous
                             SYN_Task += "\t\t\tt" + str(i) + " BEFORE [0, +INF] t" + str(i+1) + ";\n"
                         SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
                         SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] t" + str(i) + ";\n"
-                    if(task.collaboration_type == "Simultaneous"):
+                    if(task.collaboration_type == SIM):
                         SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] h" + str(i) + ";\n"
                         SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] r" + str(i) + ";\n"
                         SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] h" + str(i) + ";\n"
                         SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] r" + str(i) + ";\n"
-                    if(task.collaboration_type == "Supportive"):
+                    if(task.collaboration_type == SUPP):
                         #Vincolo EQUALS con Supportive
                         SYN_Task += "\t\t\th" + str(i) + " EQUALS r" + str(i) + ";\n"
                         SYN_Task += "\t\t\tm CONTAINS [0, +INF] [0, +INF] h" + str(i) + ";\n"
@@ -328,8 +344,6 @@ def salva():
                         SYN_Task += "\t\t\tCONTAINS [0, +INF] [0, +INF] r" + str(i) + ";\n"
                     
                 SYN_Task += "\t\t}\n"
-
-
 
     #chiudi parentesi della regola di sincronizzazione dell'assembly process                    
     SYN_Task += "\t}\n"
