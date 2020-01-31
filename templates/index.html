@@ -171,6 +171,17 @@ and open the template in the editor.
             </form>
         </div>
         
+        <script>
+            // Submit the form only if there is a task
+            $("form").submit(function() {
+                '{% if (lista is defined) and lista %}'
+                    return true;
+                '{% else %}'  
+                    window.alert("Inserisci almeno un task!");
+                    return false;
+                '{% endif %}'
+            });
+        </script>
         <div id="footer">
         </div>
         
