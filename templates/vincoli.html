@@ -22,6 +22,7 @@
         
         <div id="content">
             <div id="process-list" class="section">
+                {% if v != "true" %}
                 <div class="section-title">Imposta i vincoli di precedenza</div>
 
                 <div class="section-content">
@@ -51,6 +52,13 @@
                         <button id="sub">Fatto</button>
                     </div>
                 </div>
+                {% endif %}
+                {% if v == "true" %}
+                <div class="section-title">Non puoi inserire vincoli di precedenza</div>
+                <div class="section-content">
+                    Non puoi inserire vincoli di precedenza poiché hai inserito un solo task nel processo
+                </div>
+                {% endif %}
             </div>
 
             <form method="POST" action="/salva">
@@ -66,7 +74,7 @@
     <script>
         $(".task").find("option:gt(0)").remove();
         '{% for element in lista %}'
-            $(".task").append("<option>" + '{{element.name}}' + "</option>");
+            $(".task").append('<option value=' + '{{element.name}}' + '>' + '{{element.name}}' + '</option>');
         '{% endfor %}'
 
         document.getElementById("pos_form").value = sessionStorage.getItem("nPos");
