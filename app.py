@@ -84,6 +84,8 @@ def aggiungi():
                 for function in element.functions:
                     if function.id == int(data[1]):
                         element.functions.remove(function)
+                if len(element.functions) == 0:
+                    lista.remove(element)
 
     if(data[-1] == "removeT"):
         for element in lista:
