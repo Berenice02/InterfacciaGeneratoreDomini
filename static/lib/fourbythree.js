@@ -30,6 +30,17 @@ $(document).ready(function() {
             this.operator = operator;
         }
     };
+
+    // Submit the form only if there is a task
+    $("form").submit(function() {
+        if (lista.length > 0) {
+            return true;
+        }
+        else {
+            window.alert("Inserisci almeno un task!");
+            return false;
+        }
+      });
     
     // show only process names and collaboration modality (task names) initially
     $(".task-description").hide();
