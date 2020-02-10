@@ -145,24 +145,14 @@
 		}
 	}
 
-	COMP_TYPE SingletonStateVariable RoboticArmType(Idle(), _Activating(), Handle(), _Deactivating())
+	COMP_TYPE SingletonStateVariable RoboticArmType(Idle(), Handle())
 	{
 		VALUE Idle() [1, +INF]
-		MEETS {
-			_Activating();
-		}
-
-		VALUE _Activating() [1, 5]
 		MEETS {
 			Handle();
 		}
 
 		VALUE Handle() [1, +INF]
-		MEETS {
-			_Deactivating();
-		}
-
-		VALUE _Deactivating() [1, 5]
 		MEETS {
 			Idle();
 		}
