@@ -31,7 +31,8 @@ SUPP = "Supportive"
 
 #lista di task
 f = Function(1, "a", 2, 2, "a")
-lista = [Task("A", "b", [f]), Task("B", "b", [f])]
+#lista = [Task("A", "b", [f]), Task("B", "b", [f])]
+lista = []
 #lista di vincoli di precedenza sui task
 vincoli = []
 numeroDominio = 0
