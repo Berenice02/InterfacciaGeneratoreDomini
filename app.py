@@ -355,7 +355,10 @@ def salva():
     #salvataggio
     global numeroDominio
     with open("static/base.ddl", "r") as s:
-        nome = apriFinestra()
+        root = Tk()
+        root.withdraw()
+        nome = apriFinestra(root)
+        root.destroy()
         with open(nome, "w+") as f:
             #scrivo nome dominio e incremento il contatore
             f.write("DOMAIN cembre" + str(numeroDominio) + " {\n")
@@ -376,11 +379,9 @@ def salva():
     return render_template("success.html", file=nome)
 
 #finestra per la scelta del nome
-def apriFinestra():
+def apriFinestra(root):
     global numeroDominio
     nome = "Cembre" + str(numeroDominio)
-    root = Tk()
-    root.withdraw()
     root.filename = asksaveasfilename(defaultextension=".ddl", title="Save as", initialfile=nome+".ddl")
     return root.filename
     
