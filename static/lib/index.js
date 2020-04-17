@@ -465,5 +465,9 @@ $(document).ready(function() {
         }
     }
 
-    sessionStorage.setItem("c_id", 0);
+    //set id constraints
+    {if( sessionStorage.getItem("new") === "true" )
+        sessionStorage.setItem("c_id", 0);
+    }
+    
 });
