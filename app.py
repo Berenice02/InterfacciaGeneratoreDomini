@@ -37,20 +37,13 @@ lista = []
 vincoli = []
 numeroDominio = 0
 
-#pagina iniziale
+###############################################################################
+###############################################################################
+#                       PAGINA INIZIALE                                       #
+###############################################################################
+###############################################################################
 @app.route('/')
 def hello():
-    return render_template("index.html", lista=lista)
-
-#######################################################################
-#       Reset della lista se si decide di creare un nuovo dominio
-#######################################################################
-@app.route('/true', methods=['GET'])
-def new():
-    global lista
-    global vincoli
-    lista.clear()
-    vincoli.clear()
     return render_template("index.html", lista=lista)
 
 ########################################################################
@@ -164,6 +157,7 @@ def aggiungiVincoli():
 ###############################################################################
 ###############################################################################
 #funzione che aggiunge un task se la modalità è Independent o Synchronous
+###############################################################################
 def aggiungiIndValue(function, operator):
     tmp = "\t\t\tt" + str(function.id) + " <!> " 
     if( operator == "Human"):
@@ -219,6 +213,7 @@ def combLin(n):
 			tmp1[i].append('Human')
 			tmp2[i].append('Robot')
 		return tmp1 + tmp2
+
 
 #########################################################################################
 #                   Salvataggio del dominio in un file
@@ -378,12 +373,24 @@ def salva():
 
     return render_template("success.html", file=nome)
 
-#finestra per la scelta del nome
+#finestra per il salvataggio
 def apriFinestra(root):
     global numeroDominio
     nome = "Cembre" + str(numeroDominio)
     root.filename = asksaveasfilename(defaultextension=".ddl", title="Save as", initialfile=nome+".ddl")
     return root.filename
+
+
+#######################################################################
+#       Reset della lista se si decide di creare un nuovo dominio
+#######################################################################
+@app.route('/true', methods=['GET'])
+def new():
+    global lista
+    global vincoli
+    lista.clear()
+    vincoli.clear()
+    return render_template("index.html", lista=lista)
     
 
 if __name__ == '__main__':

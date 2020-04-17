@@ -131,6 +131,10 @@ $(document).ready(function() {
         send(tmp);
     });
 
+    
+    /**************************************
+    *   Send the json
+    ***************************************/
     function send(tmp) {
         //create the json data
         var js_data = JSON.stringify(tmp);
