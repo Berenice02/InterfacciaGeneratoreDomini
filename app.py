@@ -30,8 +30,6 @@ SIM = "Simultaneous"
 SUPP = "Supportive"
 
 #lista di task
-f = Function(1, "a", 2, 2, "a")
-#lista = [Task("A", "b", [f]), Task("B", "b", [f])]
 lista = []
 #lista di vincoli di precedenza sui task
 vincoli = []
@@ -73,7 +71,7 @@ def aggiungi():
             func = Function(f_id, f_type, f_pos, f_pos1, f_operator)
             functions.append(func)
 
-        name = data[-2]["taskName"].strip().capitalize()
+        name = data[-2]["taskName"].replace(" ", "").capitalize()
         collaboration = data[-2]["collab"]
         task = Task(name, collaboration, functions)
         #aggiunta del task alla lista
