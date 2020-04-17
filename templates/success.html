@@ -21,9 +21,17 @@
             <div id="process-list" class="section">
                 <div class="section-title">Successo!</div>
 
-                <div class="section-content">
-                    <p>Il tuo file è stato salvato correttamente qui:</p>
-                    <p>{{file}}</p>
+                <div class="grid-container">
+                    <div class="section-content">
+                        <p>Il tuo file è stato salvato correttamente</p>
+                        <p>{{file}}</p>
+                    </div>
+
+                    {% if p == "false" %}
+                    <form id="pdl" method="GET" action="/salva">
+                        <button class="submit">Scarica il problema.pdl</button>
+                    </form>
+                    {% endif %}
                 </div>
             </div>
 

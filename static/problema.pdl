@@ -1,0 +1,20 @@
+
+	
+	//Facts
+	f0 <fact> Cembre.case_study.Idle() AT [0, 0] [0, +INF] [1, +INF];
+	f1 <fact> AssemblyProcess.tasks.Idle() AT [0, 0] [0, +INF] [1, +INF];
+	
+	f2 <fact> HumanProcess.process.Idle() AT [0, 0] [0, +INF] [1, +INF];
+	f3 <fact> Human.motions.At(?locH) AT [0, 0] [0, +INF] [1, +INF];
+	?locH = base;
+	f4 <fact> RoboticProcess.process.Idle() AT [0, 0] [0, +INF] [1, +INF];
+	f5 <fact> Robot.operator.Idle() AT [0, 0] [0, +INF] [1, +INF];
+	f6 <fact> RoboticBase.motions.At(?locR)AT [0, 0] [0, +INF] [1, +INF];
+	?locR = base;
+	f7 <fact> Arm.arm.Idle() AT [0, 0] [0, +INF] [1, +INF];
+	f8 <fact> Tool.gripper.Open() AT [0, 0] [0, +INF] [1, +INF];
+	
+	
+	//Goals
+	g0 <goal> Cembre.case_study.Assembly() AT [0, +INF] [0, +INF] [1, +INF];
+}

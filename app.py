@@ -354,6 +354,13 @@ def salva():
         root.withdraw()
         nome = apriFinestra(root)
         root.destroy()
+
+        if (not nome):
+            if len(lista)>1:
+                return render_template("vincoli.html", lista=lista, vincoli=vincoli)
+            else:
+                return render_template("vincoli.html", lista=[], vincoli=[], v="true")
+
         with open(nome, "w+") as f:
             #scrivo nome dominio e incremento il contatore
             f.write("DOMAIN cembre" + str(numeroDominio) + " {\n")
@@ -371,7 +378,7 @@ def salva():
             f.close()
         s.close()
 
-    return render_template("success.html", file=nome)
+    return render_template("success.html", file=nome, p="false")
 
 #finestra per il salvataggio
 def apriFinestra(root):
@@ -379,6 +386,39 @@ def apriFinestra(root):
     nome = "Cembre" + str(numeroDominio)
     root.filename = asksaveasfilename(defaultextension=".ddl", title="Save as", initialfile=nome+".ddl")
     return root.filename
+
+
+#######################################################################
+#       Salvataggio del file pdl
+#######################################################################
+@app.route('/salva', methods=['GET'])
+def problema():
+    global numeroDominio
+    nome = "Problema" + str(numeroDominio-1)
+
+    root = Tk()
+    root.withdraw()
+    root.filename = asksaveasfilename(defaultextension=".pdl", title="Save as", initialfile=nome+".pdl")
+    nome = root.filename
+    root.destroy()
+
+    if (not root.filename):
+        return render_template("success.html", p="false")
+
+    with open("static/problema.pdl", "r") as s:
+        with open(nome, "w+") as f:
+            #scrivo nome problema
+            f.write("PROBLEM DEMO (DOMAIN cembre" + str(numeroDominio-1) + ") {\n")
+
+            source = s.readlines()
+            f.writelines(source)
+
+            f.close()
+        s.close()
+
+    return render_template("success.html", file=nome, p="true")
+
+
 
 
 #######################################################################
