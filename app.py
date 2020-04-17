@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import os
+from tkinter import Tk
+from tkinter.filedialog import asksaveasfilename
 app = Flask(__name__)
 
 #classe dei task
@@ -353,7 +355,7 @@ def salva():
     #salvataggio
     global numeroDominio
     with open("static/base.ddl", "r") as s:
-        nome = "Cembre" + str(numeroDominio) + ".ddl"
+        nome = apriFinestra()
         with open(nome, "w+") as f:
             #scrivo nome dominio e incremento il contatore
             f.write("DOMAIN cembre" + str(numeroDominio) + " {\n")
@@ -372,6 +374,16 @@ def salva():
         s.close()
 
     return render_template("success.html", file=nome)
+
+#finestra per la scelta del nome
+def apriFinestra():
+    global numeroDominio
+    nome = "Cembre" + str(numeroDominio)
+    root = Tk()
+    root.withdraw()
+    root.filename = asksaveasfilename(defaultextension=".ddl", title="Save as", initialfile=nome+".ddl")
+    return root.filename
+    
 
 if __name__ == '__main__':
     app.run()
