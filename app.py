@@ -351,8 +351,11 @@ def salva():
     global numeroDominio
     with open("static/base.ddl", "r") as s:
         root = Tk()
+        root.attributes("-topmost", True)
         root.withdraw()
-        nome = apriFinestra(root)
+        nome = "Cembre" + str(numeroDominio)
+        root.filename = asksaveasfilename(defaultextension=".ddl", title="Save as", initialfile=nome+".ddl")
+        nome = root.filename
         root.destroy()
 
         if (not nome):
@@ -379,13 +382,6 @@ def salva():
         s.close()
 
     return render_template("success.html", file=nome, p="false")
-
-#finestra per il salvataggio
-def apriFinestra(root):
-    global numeroDominio
-    nome = "Cembre" + str(numeroDominio)
-    root.filename = asksaveasfilename(defaultextension=".ddl", title="Save as", initialfile=nome+".ddl")
-    return root.filename
 
 
 #######################################################################
