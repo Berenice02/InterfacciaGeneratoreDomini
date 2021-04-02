@@ -1,7 +1,15 @@
+# coding=utf-8
 from flask import Flask, render_template, request, jsonify
 import os
-from tkinter import Tk
-from tkinter.filedialog import asksaveasfilename
+import sys
+
+if sys.version_info >= (3,):
+    from tkinter import Tk
+    from tkinter.filedialog import asksaveasfilename
+else:
+    from Tkinter import Tk
+    import Tkinter, Tkconstants, tkFileDialog
+
 app = Flask(__name__)
 
 #classe dei task
