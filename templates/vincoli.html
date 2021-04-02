@@ -24,7 +24,7 @@
             <div id="process-list" class="section">
                 <!-- v==true quando c'è un solo task nella lista quindi non possono esserci vincoli -->
                 {% if v != "true" %}
-                <div class="section-title">Imposta i vincoli di precedenza</div>
+                <div class="section-title">Set the temporal constraints</div>
 
                 <div class="section-content">
                     <div id="results" class="task-description process-description process section-item">
@@ -38,7 +38,7 @@
                             <select class="task t2">
                                 <option selected disabled>{{element.t2}}</option>
                             </select>
-                            <button class="remove">Elimina</button>
+                            <button class="remove">Delete</button>
                         </div>
                         {% endfor %}
                     </div>
@@ -50,25 +50,25 @@
                         <select class="task" id="t2">
                             <option selected disabled></option>
                         </select>
-                        <button id="sub">Fatto</button>
+                        <button id="sub">Done</button>
                     </div>
                 </div>
                 {% endif %}
                 {% if v == "true" %}
-                <div class="section-title">Non puoi inserire vincoli di precedenza</div>
+                <div class="section-title">It is not possible to enter temporal constraints.</div>
                 <div class="section-content">
-                    Non puoi inserire vincoli di precedenza poiché hai inserito un solo task nel processo
+                    You can't add temporal constraints since you' ve submitted only one task
                 </div>
                 {% endif %}
             </div>
 
             <form method="GET" action="/">
-                <button id="back" class="submit">Torna indietro</button>
+                <button id="back" class="submit">Back</button>
             </form>
 
             <form method="POST" action="/salva">
                 <input type="hidden" name="pos_form" id="pos_form"/>
-                <button class="submit" type="submit">Salva dominio</button>
+                <button class="submit" type="submit">Save</button>
             </form>
 
         </div>

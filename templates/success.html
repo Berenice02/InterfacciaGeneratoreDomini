@@ -19,27 +19,27 @@
         
         <div id="content">
             <div id="process-list" class="section">
-                <div class="section-title">Successo!</div>
+                <div class="section-title">Success!</div>
 
                 <div class="grid-container">
                     <div class="section-content">
-                        <p>Il tuo file è stato salvato correttamente</p>
+                        <p>Your file has been correctly saved!</p>
                         <p>{{file}}</p>
                     </div>
 
                     {% if p == "false" %}
                     <form id="pdl" method="GET" action="/salva">
-                        <button class="submit">Scarica il problema.pdl</button>
+                        <button class="submit">Download problem.pdl</button>
                     </form>
                     {% endif %}
                 </div>
             </div>
 
             <form method="GET" action="/true">
-                <button class="submit" id="new">Crea un nuovo dominio</button>
+                <button class="submit" id="new">Add a new domain</button>
             </form>
             <form method="GET" action="/">
-                <button class="submit" id="mod">Modifica il dominio precedente</button>
+                <button class="submit" id="mod">Edit the last domain</button>
             </form>
 
 

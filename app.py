@@ -164,13 +164,13 @@ def aggiungiIndValue(function, operator):
         tmp += "HumanProcess.process._"
     if( operator == "Robot"):
         tmp += "RoboticProcess.process."
-    if( function.type == "Manipolazione"):
+    if( function.type == "Manipulation"):
         tmp += "Task_manipolazione(?loc" + str(function.id) + ");\n"
         tmp += "\t\t\t?loc" + str(function.id) + " = Pos" + str(function.pos) + ";\n"
         tmp += "\t\t\t\tp" + str(function.id) + " <!> Pos" + str(function.pos) + ".position.REQUIREMENT(?amountP" + str(function.id) + ");\n"
         tmp += "\t\t\t\t?amountP" + str(function.id) + " = 2;\n"
         tmp += "\t\t\t\tp" + str(function.id) + " EQUALS t" + str(function.id) + ";\n"
-    if( function.type == "Spostamento"):
+    if( function.type == "PickAndPlace"):
         tmp += "Task_spostamento(?from" + str(function.id) + ", ?to" + str(function.id) + ");\n"
         tmp += "\t\t\t?from" + str(function.id) + " = Pos" + str(function.pos) + ";\n"
         tmp += "\t\t\t?to" + str(function.id) + " = Pos" + str(function.pos1) + ";\n"
@@ -265,7 +265,7 @@ def salva():
         SYN_Task += "\n\t\tVALUE " + task.name + "() {\n"
         for function in task.functions:
             if(task.collaboration_type == IND or task.collaboration_type == SYN):
-                if(function.assigned_to != "Indifferente"):
+                if(function.assigned_to != "Indifferent"):
                     SYN_Task += aggiungiIndValue(function, function.assigned_to)
                 else:
                     indifferenti.append(function)
@@ -308,7 +308,7 @@ def salva():
                 SYN_Task += "\n\t\tVALUE " + task.name + "() {\n"
                 for function in task.functions:
                     if(task.collaboration_type == IND or task.collaboration_type == SYN):
-                        if(function.assigned_to != "Indifferente"):
+                        if(function.assigned_to != "Indifferent"):
                             SYN_Task += aggiungiIndValue(function, function.assigned_to)
                         else:
                             n = indifferenti.index(function)

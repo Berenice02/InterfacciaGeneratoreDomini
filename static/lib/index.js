@@ -6,13 +6,13 @@
 
 // function to execute on page load
 $(document).ready(function() {
-    const Manipolazione = "Manipolazione";
-    const Spostamento = "Spostamento";
+    const Manipolazione = "Manipulation";
+    const Spostamento = "PickAndPlace";
 
     const Human = "Human";
     const Robot = "Robot";
     const H_R = "Human/Robot";
-    const Indiff = "Indifferente";
+    const Indiff = "Indifferent";
 
     const Ind = "Independent";
     const Syn = "Synchronous";
@@ -291,7 +291,7 @@ $(document).ready(function() {
     ***************************************/
     $(".new-task").click(function() {
         if(sessionStorage.getItem("nPos") === null) {
-            window.alert("Inserisci il numero di posizioni!");
+            window.alert("Enter the number of positions!");
         }
         else {
             $(this).siblings(".task").fadeToggle("fast");
@@ -381,15 +381,15 @@ $(document).ready(function() {
             lista.push(tmp);
 
             //display the new subtask
-            var res = ("<p>Sub-task di tipo: " + type);
+            var res = ("<p>Type of subtask: " + type);
             if (type === Manipolazione){
-                res += (" In posizione: " + pos);
+                res += (" In position: " + pos);
             }
             if (type === Spostamento) {
-                res += (" Dalla posizione " + pos);
-                res += (" alla " + pos1);
+                res += (" From position " + pos);
+                res += (" to " + pos1);
             }
-            res += (" Assegnato a: " + operator + "</p>");
+            res += (" Has to be performed by : " + operator + "</p>");
             $("#results").append(res);
             
             funcID += 1;

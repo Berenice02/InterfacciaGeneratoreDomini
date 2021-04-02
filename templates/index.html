@@ -46,7 +46,7 @@ and open the template in the editor.
                                         <label class="task-title el-name">{{element.name}}</label>
                                         <label class="task-title"> - </label>
                                         <label class="collaboration-type">{{element.collaboration_type}}</label>
-                                        <button class="removeT">Elimina</button>
+                                        <button class="removeT">Delete</button>
                                     </div>
 
                                     <div class="task-description" title="{{element.name}}">
@@ -56,17 +56,17 @@ and open the template in the editor.
                                             <div class="type">
                                                 <select class="select-type">
                                                     <option selected disabled>{{function.type}}</option>
-                                                    <option>Manipolazione</option>
-                                                    <option>Spostamento</option>
+                                                    <option>Manipulation</option>
+                                                    <option>PickAndPlace</option>
                                                 </select>
                                             </div>
                                             <div class="position">
-                                                <div class="function-pos handle-pos">In posizione</div>
-                                                <div class="function-pos first-pos">Dalla posizione</div>
+                                                <div class="function-pos handle-pos">In position</div>
+                                                <div class="function-pos first-pos">From position</div>
                                                 <select class="pos select-pos p">
                                                     <option selected disabled>{{function.pos}}</option>
                                                 </select>
-                                                <div class="function-pos second-pos">alla</div>
+                                                <div class="function-pos second-pos">to</div>
                                                 <select class="pos select-pos second-pos p1">
                                                     <option selected disabled>{{function.pos1}}</option>
                                                 </select>
@@ -76,11 +76,11 @@ and open the template in the editor.
                                                     <option selected disabled value="{{function.assigned_to}}">{{function.assigned_to}}</option>
                                                     <option>Robot</option>
                                                     <option>Human</option>
-                                                    <option>Indifferente</option>
+                                                    <option>Indifferent</option>
                                                     <option disabled>Human/Robot</option>
                                                 </select>
                                             </div>
-                                            <button class="removeF">Elimina</button>
+                                            <button class="removeF">Delete</button>
                                         </div>
                                         {% endfor %}
                                     </div>
@@ -94,8 +94,8 @@ and open the template in the editor.
                                     <div id="task-form">
 
                                         <div>
-                                            <input type="text" id="new-name" placeholder="Inserisci il nome del task" />
-                                            <label>E la modalità collaborativa</label>
+                                            <input type="text" id="new-name" placeholder="Enter the name of the task" />
+                                            <label>And its collaboration modality</label>
                                             <select id="new-collaboration" name="collaboration">
                                                 <option selected disabled></option>
                                                 <option>Independent</option>
@@ -108,37 +108,37 @@ and open the template in the editor.
                                         <div id="results"></div>
 
                                         <div class="sub-task-form">
-                                            <label>Tipo di sub-task:</label>
+                                            <label>Type of sub-task:</label>
                                             <select id="f-new-type">
                                                 <option selected disabled></option>
-                                                <option>Manipolazione</option>
-                                                <option>Spostamento</option>
+                                                <option>Manipulation</option>
+                                                <option>PickAndPlace</option>
                                             </select>
-                                            <label class="handle">In posizione</label>
-                                            <label class="move">Dalla posizione</label>
+                                            <label class="handle">In position</label>
+                                            <label class="move">From position</label>
                                             <select class="pos" id="pos">
                                                 <option selected disabled></option>
                                             </select>
-                                            <label class="move">alla</label>
+                                            <label class="move">to</label>
                                             <select class="move pos" id="pos1">
                                                 <option selected disabled></option>
                                             </select>
                                         </div>
                                         <div class="sub-task-form">
-                                            <label>Da chi deve essere svolto?</label>
+                                            <label>Which operator should perform it?</label>
                                             <select id="new-operator" name="operator">
                                                 <option selected disabled></option>
                                                 <option>Robot</option>
                                                 <option>Human</option>
-                                                <option>Indifferente</option>
+                                                <option>Indifferent</option>
                                                 <option disabled>Human/Robot</option>
                                             </select>
                                         </div>
 
                                         <div class="sub-task-form">
-                                            <button type="reset" id="func">Aggiungi sub-task</button>
+                                            <button type="reset" id="func">Add sub-task</button>
                                         </div >
-                                        <button type="button" id="sub">Inserisci task</button>
+                                        <button type="button" id="sub">Save task</button>
                                     </div>
                                 </div>
 
@@ -147,7 +147,7 @@ and open the template in the editor.
                         
                     </div>
                     <div id="nPos">
-                        Seleziona il numero di posizioni
+                        Select the number of positions
                         <select title="Numero posizioni" name="n_positions" id="n_positions" >
                             <option selected disabled></option>
                             <option>1</option>
@@ -167,7 +167,7 @@ and open the template in the editor.
             </div>
 
             <form action="/vincoli">
-                <button class="submit" type="submit">Prosegui</button>
+                <button class="submit" type="submit">Next</button>
             </form>
         </div>
         
@@ -177,7 +177,7 @@ and open the template in the editor.
                 '{% if (lista is defined) and lista %}'
                     return true;
                 '{% else %}'  
-                    window.alert("Inserisci almeno un task!");
+                    window.alert("Enter at least one task!");
                     return false;
                 '{% endif %}'
             });
