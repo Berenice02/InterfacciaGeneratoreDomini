@@ -401,6 +401,7 @@ def problema():
     nome = "Problema" + str(numeroDominio-1)
 
     root = Tk()
+    root.attributes("-topmost", True)
     root.withdraw()
     root.filename = asksaveasfilename(defaultextension=".pdl", title="Save as", initialfile=nome+".pdl")
     nome = root.filename
