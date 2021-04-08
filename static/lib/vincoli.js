@@ -50,7 +50,7 @@ $(document).ready(function() {
          var t2 = (document.getElementById("t2").value);
 
          if(t1 === "" || t2 === "") {
-           window.alert("Inserisci tutti i dati del vincolo");
+           window.alert("Enter all the information about the constraint!");
          }
 
          else {

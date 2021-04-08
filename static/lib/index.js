@@ -373,7 +373,7 @@ $(document).ready(function() {
           }
 
           if(type === "" || pos === "" || pos1 === "" || operator === "") {
-            window.alert("Inserisci tutti i dati del sub-task");
+            window.alert("Enter all the information of the sub-task!");
           }
 
           else {
@@ -408,7 +408,7 @@ $(document).ready(function() {
         var nomeTask = document.getElementById("new-name").value;
         var collab = document.getElementById("new-collaboration").value;
         if (nomeTask === "" || collab === "" || lista.length<=0) {
-            window.alert("Inserisci tutti i dati del task");
+            window.alert("Enter all the information of the task!");
         }
 
         else {
